@@ -113,7 +113,6 @@ class SimpleFacebookPixelSnippetTest extends BrowserTestBase {
     $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
 
     $this->drupalLogout();
-    $this->drupalGet('<front>');
     $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelScriptCode('567123'));
     $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
 
@@ -130,7 +129,6 @@ class SimpleFacebookPixelSnippetTest extends BrowserTestBase {
     $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
 
     $this->drupalLogout();
-    $this->drupalGet('<front>');
     $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode('567123'));
     $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
   }
