@@ -1,0 +1,16 @@
+simple_facebook_pixel.settings:
+  type: config_object
+  label: 'Simple Facebook Pixel'
+  mapping:
+    pixel_enabled:
+      type: boolean
+      label: 'Enable Facebook Pixel'
+    pixel_id:
+      type: string
+      label: 'Facebook Pixel ID'
+    excluded_roles:
+      type: sequence
+      label: 'Exclude Facebook Pixel for the following roles'
+      sequence:
+        type: string
+        label: 'Role'

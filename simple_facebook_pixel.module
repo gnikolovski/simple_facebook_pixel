@@ -1,0 +1,72 @@
+<?php
+
+/**
+ * @file
+ * Simple Facebook Pixel.
+ *
+ * Adds the required Javascript to your site to allow tracking by the Facebook
+ * Pixel.
+ *
+ * @author: Goran Nikolovski <https://www.drupal.org/u/gnikolovski>
+ */
+
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function simple_facebook_pixel_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.simple_facebook_pixel':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Simple Facebook Pixel adds Facebook Pixel on your Drupal site.') . '</p>';
+
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function simple_facebook_pixel_page_attachments(array &$page) {
+  $config = \Drupal::config('simple_facebook_pixel.settings');
+  $page['#cache']['tags'] = Cache::mergeTags(isset($page['#cache']['tags']) ? $page['#cache']['tags'] : [], $config->getCacheTags());
+
+  $pixel_enabled = $config->get('pixel_enabled');
+  $pixel_id = Html::escape($config->get('pixel_id'));
+
+  if (!$pixel_enabled || !$pixel_id) {
+    return;
+  }
+
+  $excluded_roles = $config->get('excluded_roles');
+
+  $current_user_roles = \Drupal::currentUser()->getRoles();
+  foreach (array_values($excluded_roles) as $user_role) {
+    if (in_array($user_role, $current_user_roles)) {
+      return;
+    }
+  }
+
+  /** @var \Drupal\simple_facebook_pixel\PixelBuilderService $pixel_builder */
+  $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+  $pixel_script_code = $pixel_builder->getPixelScriptCode($pixel_id);
+  $pixel_noscript_code = $pixel_builder->getPixelNoScriptCode($pixel_id);
+
+  $page['#attached']['html_head'][] = [[
+    '#tag' => 'script',
+    '#value' => $pixel_script_code,
+  ],
+    'simple_facebook_pixel_script_code',
+  ];
+
+  $page['#attached']['html_head'][] = [[
+    '#type' => 'inline_template',
+    '#template' => '<noscript>' . $pixel_noscript_code . '</noscript>',
+  ],
+    'simple_facebook_pixel_noscript_code',
+  ];
+}
