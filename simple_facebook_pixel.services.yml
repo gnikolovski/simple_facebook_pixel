@@ -1,0 +1,3 @@
+services:
+  simple_facebook_pixel.pixel_builder:
+    class: Drupal\simple_facebook_pixel\PixelBuilderService

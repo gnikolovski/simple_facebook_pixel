@@ -1,0 +1,6 @@
+name: 'Simple Facebook Pixel'
+type: module
+description: 'Simple Facebook Pixel adds Facebook Pixel on your Drupal site.'
+core: 8.x
+package: Statistics
+configure: simple_facebook_pixel.settings_form

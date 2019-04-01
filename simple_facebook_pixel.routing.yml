@@ -1,0 +1,7 @@
+simple_facebook_pixel.settings_form:
+  path: '/admin/config/system/simple-facebook-pixel'
+  defaults:
+    _form: '\Drupal\simple_facebook_pixel\Form\SimpleFacebookPixelSettingsForm'
+    _title: 'Simple Facebook Pixel'
+  requirements:
+    _permission: 'administer simple facebook pixel'

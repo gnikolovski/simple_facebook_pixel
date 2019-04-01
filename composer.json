@@ -1,0 +1,21 @@
+{
+    "name": "drupal/simple_facebook_pixel",
+    "description": "Simple Facebook Pixel adds Facebook Pixel on your Drupal site.",
+    "type": "drupal-module",
+    "homepage": "https://www.drupal.org/project/simple_facebook_pixel",
+    "authors": [
+        {
+            "name": "Goran Nikolovski",
+            "email": "nikolovski84@gmail.com",
+            "homepage": "http://gorannikolovski.com",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://www.drupal.org/node/add/project-issue/simple_facebook_pixel",
+        "email": "nikolovski84@gmail.com"
+    },
+    "license": "GPL-2.0+",
+    "minimum-stability": "dev",
+    "require": {}
+}
