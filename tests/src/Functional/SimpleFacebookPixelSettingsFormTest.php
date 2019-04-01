@@ -9,7 +9,7 @@ use Drupal\Tests\BrowserTestBase;
  *
  * @group simple_facebook_pixel
  */
-class ConfigDeleteUITest extends BrowserTestBase {
+class SimpleFacebookPixelSettingsFormTest extends BrowserTestBase {
 
   /**
    * Modules to enable.
