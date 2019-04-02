@@ -33,11 +33,11 @@ class SimpleFacebookPixelSettingsFormTest extends BrowserTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->user = $this->drupalCreateUser([
+    $account = $this->drupalCreateUser([
       'administer modules',
       'administer simple facebook pixel',
     ]);
-    $this->drupalLogin($this->user);
+    $this->drupalLogin($account);
   }
 
   /**
@@ -77,6 +77,21 @@ class SimpleFacebookPixelSettingsFormTest extends BrowserTestBase {
     $roles = [
       'anonymous' => 'anonymous',
       'authenticated' => '0',
+    ];
+    $this->assertArraySubset($roles, $this->config('simple_facebook_pixel.settings')->get('excluded_roles'));
+
+    $edit['pixel_enabled'] = TRUE;
+    $edit['pixel_id'] = '876321';
+    $edit['excluded_roles[anonymous]'] = FALSE;
+    $edit['excluded_roles[authenticated]'] = TRUE;
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->assertSession()->responseContains('The configuration options have been saved.');
+
+    $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('pixel_enabled'));
+    $this->assertEquals('876321', $this->config('simple_facebook_pixel.settings')->get('pixel_id'));
+    $roles = [
+      'anonymous' => '0',
+      'authenticated' => 'authenticated',
     ];
     $this->assertArraySubset($roles, $this->config('simple_facebook_pixel.settings')->get('excluded_roles'));
   }

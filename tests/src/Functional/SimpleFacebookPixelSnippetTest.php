@@ -131,6 +131,38 @@ class SimpleFacebookPixelSnippetTest extends BrowserTestBase {
     $this->drupalLogout();
     $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode('567123'));
     $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+
+    $this->drupalLogin($this->user);
+    $edit['pixel_enabled'] = TRUE;
+    $edit['pixel_id'] = '567123';
+    $edit['excluded_roles[anonymous]'] = TRUE;
+    $edit['excluded_roles[authenticated]'] = TRUE;
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->assertSession()->responseContains('The configuration options have been saved.');
+
+    $this->drupalGet('<front>');
+    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelScriptCode('567123'));
+    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+
+    $this->drupalLogout();
+    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelScriptCode('567123'));
+    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+
+    $this->drupalLogin($this->user);
+    $edit['pixel_enabled'] = TRUE;
+    $edit['pixel_id'] = '567123';
+    $edit['excluded_roles[anonymous]'] = FALSE;
+    $edit['excluded_roles[authenticated]'] = FALSE;
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->assertSession()->responseContains('The configuration options have been saved.');
+
+    $this->drupalGet('<front>');
+    $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode('567123'));
+    $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+
+    $this->drupalLogout();
+    $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode('567123'));
+    $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
   }
 
 }
