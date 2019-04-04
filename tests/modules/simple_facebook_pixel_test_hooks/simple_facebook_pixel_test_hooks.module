@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * Implements hook_simple_facebook_pixel_script_code_alter().
+ */
+function simple_facebook_pixel_test_hooks_simple_facebook_pixel_script_code_alter(&$script_code) {
+  $script_code = 'Altered script code';
+}
+
+/**
+ * Implements hook_simple_facebook_pixel_noscript_code_alter().
+ */
+function simple_facebook_pixel_test_hooks_simple_facebook_pixel_noscript_code_alter(&$noscript_code) {
+  $noscript_code = 'Altered noscript code';
+}
