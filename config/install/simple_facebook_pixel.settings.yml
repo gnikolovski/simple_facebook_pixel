@@ -1,3 +1,4 @@
 pixel_enabled: true
 pixel_id: ''
 excluded_roles: {  }
+view_content_entities: {  }

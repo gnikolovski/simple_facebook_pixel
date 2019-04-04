@@ -10,7 +10,7 @@
  * @author: Goran Nikolovski <https://www.drupal.org/u/gnikolovski>
  */
 
-use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\Xss;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Routing\RouteMatchInterface;
 
@@ -32,24 +32,14 @@ function simple_facebook_pixel_help($route_name, RouteMatchInterface $route_matc
  * Implements hook_page_attachments().
  */
 function simple_facebook_pixel_page_attachments(array &$page) {
-  $config = \Drupal::config('simple_facebook_pixel.settings');
-  $page['#cache']['tags'] = Cache::mergeTags(isset($page['#cache']['tags']) ? $page['#cache']['tags'] : [], $config->getCacheTags());
-
-  $pixel_enabled = $config->get('pixel_enabled');
-  $pixel_id = Html::escape($config->get('pixel_id'));
-
-  if (!$pixel_enabled || !$pixel_id) {
+  if (!simple_facebook_pixel_is_enabled()) {
     return;
   }
 
-  $excluded_roles = $config->get('excluded_roles');
+  $config = \Drupal::config('simple_facebook_pixel.settings');
+  $pixel_id = Xss::filter($config->get('pixel_id'));
 
-  $current_user_roles = \Drupal::currentUser()->getRoles();
-  foreach (array_values($excluded_roles) as $user_role) {
-    if (in_array($user_role, $current_user_roles)) {
-      return;
-    }
-  }
+  $page['#cache']['tags'] = Cache::mergeTags(isset($page['#cache']['tags']) ? $page['#cache']['tags'] : [], $config->getCacheTags());
 
   /** @var \Drupal\simple_facebook_pixel\PixelBuilderService $pixel_builder */
   $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
@@ -75,4 +65,29 @@ function simple_facebook_pixel_page_attachments(array &$page) {
   ],
     'simple_facebook_pixel_noscript_code',
   ];
+}
+
+/**
+ * Checks if Facebook Pixel is enabled.
+ */
+function simple_facebook_pixel_is_enabled() {
+  $config = \Drupal::config('simple_facebook_pixel.settings');
+
+  $pixel_enabled = $config->get('pixel_enabled');
+  $pixel_id = $config->get('pixel_id');
+
+  if (!$pixel_enabled || !$pixel_id) {
+    return FALSE;
+  }
+
+  $excluded_roles = $config->get('excluded_roles');
+  $current_user_roles = \Drupal::currentUser()->getRoles();
+
+  foreach (array_values($excluded_roles) as $user_role) {
+    if (in_array($user_role, $current_user_roles)) {
+      return FALSE;
+    }
+  }
+
+  return TRUE;
 }

@@ -14,3 +14,9 @@ simple_facebook_pixel.settings:
       sequence:
         type: string
         label: 'Role'
+    view_content_entities:
+      type: sequence
+      label: 'Add ViewContent event to the following pages'
+      sequence:
+        type: string
+        label: 'Entity'
