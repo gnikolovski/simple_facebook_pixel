@@ -2,8 +2,10 @@
 
 namespace Drupal\simple_facebook_pixel\Form;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class SimpleFacebookPixelSettingsForm.
@@ -11,6 +13,32 @@ use Drupal\Core\Form\FormStateInterface;
  * @package Drupal\simple_facebook_pixel\Form
  */
 class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * SimpleFacebookPixelSettingsForm constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity_type.manager')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -134,20 +162,24 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
   protected function getViewContentEntities() {
     $result = [];
 
-    $content_types = \Drupal::entityTypeManager()
-      ->getStorage('node_type')
-      ->loadMultiple();
+    if ($this->entityTypeManager->hasDefinition('node_type')) {
+      $content_types = $this->entityTypeManager
+        ->getStorage('node_type')
+        ->loadMultiple();
 
-    foreach ($content_types as $content_type) {
-      $result['node:' . $content_type->getOriginalId()] = $this->t('Node') . ': ' . $content_type->label();
+      foreach ($content_types as $content_type) {
+        $result['node:' . $content_type->getOriginalId()] = $this->t('Node') . ': ' . $content_type->label();
+      }
     }
 
-    $vocabularies = \Drupal::entityTypeManager()
-      ->getStorage('taxonomy_vocabulary')
-      ->loadMultiple();
+    if ($this->entityTypeManager->hasDefinition('taxonomy_vocabulary')) {
+      $vocabularies = $this->entityTypeManager
+        ->getStorage('taxonomy_vocabulary')
+        ->loadMultiple();
 
-    foreach ($vocabularies as $vocabulary) {
-      $result['taxonomy_term:' . $vocabulary->getOriginalId()] = $this->t('Taxonomy') . ': ' . $vocabulary->label();
+      foreach ($vocabularies as $vocabulary) {
+        $result['taxonomy_term:' . $vocabulary->getOriginalId()] = $this->t('Taxonomy') . ': ' . $vocabulary->label();
+      }
     }
 
     return $result;
