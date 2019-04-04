@@ -56,7 +56,8 @@ class SimpleFacebookPixelAlterHooksTest extends BrowserTestBase {
     $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
 
     $this->container->get('module_installer')->install(['simple_facebook_pixel_test_hooks']);
-    Cache::invalidateTags(['config:simple_facebook_pixel.settings']);
+    // @todo Remove invalidation once https://www.drupal.org/project/drupal/issues/2783791 is fixed.
+    Cache::invalidateTags(['rendered']);
 
     $altered_pixel_script_code = 'Altered script code';
     $altered_pixel_noscript_code = 'Altered noscript code';
