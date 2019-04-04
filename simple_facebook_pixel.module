@@ -22,7 +22,7 @@ function simple_facebook_pixel_help($route_name, RouteMatchInterface $route_matc
     case 'help.page.simple_facebook_pixel':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Simple Facebook Pixel adds Facebook Pixel on your Drupal site.') . '</p>';
+      $output .= '<p>' . t('Simple Facebook Pixel installs Facebook Pixel on your Drupal site.') . '</p>';
 
       return $output;
   }

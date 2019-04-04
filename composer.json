@@ -1,6 +1,6 @@
 {
     "name": "drupal/simple_facebook_pixel",
-    "description": "Simple Facebook Pixel adds Facebook Pixel on your Drupal site.",
+    "description": "Simple Facebook Pixel installs Facebook Pixel on your Drupal site.",
     "type": "drupal-module",
     "homepage": "https://www.drupal.org/project/simple_facebook_pixel",
     "authors": [
