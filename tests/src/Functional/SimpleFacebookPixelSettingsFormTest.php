@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\simple_facebook_pixel\Functional;
 
+use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\Tests\BrowserTestBase;
 
 /**
@@ -17,6 +18,8 @@ class SimpleFacebookPixelSettingsFormTest extends BrowserTestBase {
    * @var array
    */
   public static $modules = [
+    'node',
+    'taxonomy',
     'simple_facebook_pixel',
   ];
 
@@ -32,6 +35,19 @@ class SimpleFacebookPixelSettingsFormTest extends BrowserTestBase {
    */
   protected function setUp() {
     parent::setUp();
+
+    $this->drupalCreateContentType([
+      'type' => 'page',
+      'name' => 'Basic page',
+    ]);
+    $this->drupalCreateContentType([
+      'type' => 'article',
+      'name' => 'Article'
+    ]);
+
+    Vocabulary::create([
+      'vid' => 'tags',
+    ])->save();
 
     $account = $this->drupalCreateUser([
       'administer modules',
@@ -51,13 +67,18 @@ class SimpleFacebookPixelSettingsFormTest extends BrowserTestBase {
     $this->assertSession()->elementExists('css', '#edit-pixel-enabled');
     $this->assertSession()->elementExists('css', '#edit-pixel-id');
     $this->assertSession()->elementExists('css', '#edit-excluded-roles');
+    $this->assertSession()->pageTextContains('PageView event is by default enabled on all pages. Other events can be enabled/disabled bellow.');
+    $this->assertSession()->elementExists('css', '#edit-view-content-entities');
+    $this->assertSession()->elementExists('css', '#edit-view-content-entities-nodearticle');
+    $this->assertSession()->elementExists('css', '#edit-view-content-entities-nodepage');
+    $this->assertSession()->elementExists('css', '#edit-view-content-entities-taxonomy-termtags');
     $this->assertSession()->buttonExists(t('Save configuration'));
   }
 
   /**
    * Tests if configuration is possible.
    */
-  public function testGoogleAnalyticsConfiguration() {
+  public function testConfiguration() {
     $this->drupalGet('admin/modules');
     $this->assertSession()->responseContains('admin/config/system/simple-facebook-pixel');
 
@@ -94,6 +115,23 @@ class SimpleFacebookPixelSettingsFormTest extends BrowserTestBase {
       'authenticated' => 'authenticated',
     ];
     $this->assertArraySubset($roles, $this->config('simple_facebook_pixel.settings')->get('excluded_roles'));
+
+    $edit['pixel_enabled'] = TRUE;
+    $edit['pixel_id'] = '876321';
+    $edit['view_content_entities[node:article]'] = TRUE;
+    $edit['view_content_entities[node:page]'] = FALSE;
+    $edit['view_content_entities[taxonomy_term:tags]'] = TRUE;
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->assertSession()->responseContains('The configuration options have been saved.');
+
+    $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('pixel_enabled'));
+    $this->assertEquals('876321', $this->config('simple_facebook_pixel.settings')->get('pixel_id'));
+    $view_content_entities = [
+      'node:article' => 'node:article',
+      'node:page' => '0',
+      'taxonomy_term:tags' => 'taxonomy_term:tags',
+    ];
+    $this->assertArraySubset($view_content_entities, $this->config('simple_facebook_pixel.settings')->get('view_content_entities'));
   }
 
   /**
