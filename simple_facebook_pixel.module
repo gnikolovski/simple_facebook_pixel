@@ -56,6 +56,12 @@ function simple_facebook_pixel_page_attachments(array &$page) {
   $pixel_script_code = $pixel_builder->getPixelScriptCode($pixel_id);
   $pixel_noscript_code = $pixel_builder->getPixelNoScriptCode($pixel_id);
 
+  // Allow other modules to alter the script code.
+  \Drupal::moduleHandler()->alter('simple_facebook_pixel_script_code', $pixel_script_code);
+
+  // Allow other modules to alter the noscript code.
+  \Drupal::moduleHandler()->alter('simple_facebook_pixel_noscript_code', $pixel_noscript_code);
+
   $page['#attached']['html_head'][] = [[
     '#tag' => 'script',
     '#value' => $pixel_script_code,
