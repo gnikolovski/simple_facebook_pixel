@@ -58,8 +58,9 @@ class AlterHooksTest extends BrowserTestBase {
     $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
-    $this->drupalGet('<front>');
+    $this->drupalGet('/node/1');
     $this->pixelBuilder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+    $this->assertSession()->responseContains('"content_name":"Test page #1"');
     $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode());
     $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode());
 
@@ -72,11 +73,13 @@ class AlterHooksTest extends BrowserTestBase {
     $altered_pixel_noscript_code = 'Appended noscript code text';
 
     $this->drupalGet('/node/1');
+    $this->assertSession()->responseNotContains('"content_name":"Test page #1"');
     $this->assertSession()->responseContains($altered_events_code);
     $this->assertSession()->responseContains($altered_pixel_script_code);
     $this->assertSession()->responseContains($altered_pixel_noscript_code);
 
     $this->drupalLogout();
+    $this->drupalGet('/node/1');
     $this->assertSession()->responseContains($altered_events_code);
     $this->assertSession()->responseContains($altered_pixel_script_code);
     $this->assertSession()->responseContains($altered_pixel_noscript_code);
