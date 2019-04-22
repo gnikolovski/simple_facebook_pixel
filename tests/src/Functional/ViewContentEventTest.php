@@ -38,6 +38,8 @@ class ViewContentEventTest extends BrowserTestBase {
   protected $pixelBuilder;
 
   /**
+   * The config factory.
+   *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
