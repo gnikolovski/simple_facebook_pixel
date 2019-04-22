@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * @file
+ * Simple Facebook Pixel Test Hooks.
+ *
+ * Helper module used only for testing purposes.
+ */
+
+/**
  * Implements hook_simple_facebook_pixel_script_code_alter().
  */
 function simple_facebook_pixel_test_hooks_simple_facebook_pixel_script_code_alter(&$script_code) {

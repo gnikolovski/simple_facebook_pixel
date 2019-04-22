@@ -9,7 +9,7 @@ use Drupal\Tests\BrowserTestBase;
  *
  * @group simple_facebook_pixel
  */
-class SimpleFacebookPixelSnippetTest extends BrowserTestBase {
+class SnippetTest extends BrowserTestBase {
 
   /**
    * Modules to enable.

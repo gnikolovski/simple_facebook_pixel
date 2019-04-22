@@ -168,7 +168,7 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
         ->loadMultiple();
 
       foreach ($content_types as $content_type) {
-        $result['node:' . $content_type->getOriginalId()] = $this->t('Node') . ': ' . $content_type->label();
+        $result['node:' . $content_type->getOriginalId()] = $this->t('Node:@label', ['@label' => $content_type->label()]);
       }
     }
 
@@ -178,7 +178,7 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
         ->loadMultiple();
 
       foreach ($vocabularies as $vocabulary) {
-        $result['taxonomy_term:' . $vocabulary->getOriginalId()] = $this->t('Taxonomy') . ': ' . $vocabulary->label();
+        $result['taxonomy_term:' . $vocabulary->getOriginalId()] = $this->t('Taxonomy:@label', ['@label' => $vocabulary->label()]);
       }
     }
 

@@ -10,7 +10,7 @@ use Drupal\Tests\BrowserTestBase;
  *
  * @group simple_facebook_pixel
  */
-class SimpleFacebookPixelAlterHooksTest extends BrowserTestBase {
+class AlterHooksTest extends BrowserTestBase {
 
   /**
    * Modules to enable.

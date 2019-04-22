@@ -6,6 +6,16 @@
  */
 
 /**
+ * Alter the event array.
+ *
+ * @param array $events
+ *   The events array.
+ */
+function hook_simple_facebook_pixel_events_alter(&$events) {
+  $events[0]['data']['content_name'] = 'Altered title';
+}
+
+/**
  * Alter the script code for pages.
  *
  * @param string $script_code

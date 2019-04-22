@@ -10,7 +10,7 @@ use Drupal\Tests\BrowserTestBase;
  *
  * @group simple_facebook_pixel
  */
-class SimpleFacebookPixelSettingsFormTest extends BrowserTestBase {
+class SettingsFormTest extends BrowserTestBase {
 
   /**
    * Modules to enable.
@@ -42,7 +42,7 @@ class SimpleFacebookPixelSettingsFormTest extends BrowserTestBase {
     ]);
     $this->drupalCreateContentType([
       'type' => 'article',
-      'name' => 'Article'
+      'name' => 'Article',
     ]);
 
     Vocabulary::create([

@@ -6,11 +6,8 @@
  *
  * Adds the required Javascript to your site to allow tracking by the Facebook
  * Pixel.
- *
- * @author: Goran Nikolovski <https://www.drupal.org/u/gnikolovski>
  */
 
-use Drupal\Component\Utility\Xss;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Routing\RouteMatchInterface;
 
@@ -33,25 +30,21 @@ function simple_facebook_pixel_help($route_name, RouteMatchInterface $route_matc
  */
 function simple_facebook_pixel_page_attachments(array &$page) {
   $config = \Drupal::config('simple_facebook_pixel.settings');
-  $page['#cache']['tags'] = Cache::mergeTags(isset($page['#cache']['tags']) ? $page['#cache']['tags'] : [], $config->getCacheTags());
+  $page_cache_tags = isset($page['#cache']['tags']) ? $page['#cache']['tags'] : [];
+  $page['#cache']['tags'] = Cache::mergeTags($page_cache_tags, $config->getCacheTags());
 
   if (!simple_facebook_pixel_is_enabled()) {
     return;
   }
 
-  $config = \Drupal::config('simple_facebook_pixel.settings');
-  $pixel_id = Xss::filter($config->get('pixel_id'));
+  /** @var \Drupal\simple_facebook_pixel\PageContextServiceInterface $page_context */
+  $page_context = \Drupal::service('simple_facebook_pixel.page_context');
+  $page_context->populate();
 
   /** @var \Drupal\simple_facebook_pixel\PixelBuilderService $pixel_builder */
   $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
-  $pixel_script_code = $pixel_builder->getPixelScriptCode($pixel_id);
-  $pixel_noscript_code = $pixel_builder->getPixelNoScriptCode($pixel_id);
-
-  // Allow other modules to alter the script code.
-  \Drupal::moduleHandler()->alter('simple_facebook_pixel_script_code', $pixel_script_code);
-
-  // Allow other modules to alter the noscript code.
-  \Drupal::moduleHandler()->alter('simple_facebook_pixel_noscript_code', $pixel_noscript_code);
+  $pixel_script_code = $pixel_builder->getPixelScriptCode();
+  $pixel_noscript_code = $pixel_builder->getPixelNoScriptCode();
 
   $page['#attached']['html_head'][] = [[
     '#tag' => 'script',
@@ -62,7 +55,7 @@ function simple_facebook_pixel_page_attachments(array &$page) {
 
   $page['#attached']['html_head'][] = [[
     '#type' => 'inline_template',
-    '#template' => '<noscript>' . $pixel_noscript_code . '</noscript>',
+    '#template' => $pixel_noscript_code,
   ],
     'simple_facebook_pixel_noscript_code',
   ];
@@ -84,6 +77,8 @@ function simple_facebook_pixel_is_enabled() {
   $excluded_roles = $config->get('excluded_roles');
   $current_user_roles = \Drupal::currentUser()->getRoles();
 
+  // If the current user has any of excluded roles, then we are returning FALSE,
+  // which means that Facebook Pixel is not enabled.
   foreach (array_values($excluded_roles) as $user_role) {
     if (in_array($user_role, $current_user_roles)) {
       return FALSE;
