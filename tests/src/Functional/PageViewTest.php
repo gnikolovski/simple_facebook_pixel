@@ -5,7 +5,7 @@ namespace Drupal\Tests\simple_facebook_pixel\Functional;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * Tests the Facebook Pixel snippet.
+ * Tests PageView event.
  *
  * @group simple_facebook_pixel
  */
@@ -28,13 +28,6 @@ class PageViewTest extends BrowserTestBase {
   protected $user;
 
   /**
-   * The pixel builder service.
-   *
-   * @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface
-   */
-  protected $pixelBuilder;
-
-  /**
    * {@inheritdoc}
    */
   protected function setUp() {
@@ -44,21 +37,23 @@ class PageViewTest extends BrowserTestBase {
       'administer simple facebook pixel',
     ]);
     $this->drupalLogin($this->user);
-
-    $this->pixelBuilder = \Drupal::service('simple_facebook_pixel.pixel_builder');
   }
 
   /**
    * Tests snippet insertion when Facebook Pixel is missing.
    */
   public function testFacebookPixelIdMissing() {
-    $this->drupalGet('');
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelScriptCode('789012'));
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelNoScriptCode('789012'));
+    $this->drupalGet('<front>');
+
+    /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
+    $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelNoScriptCode());
 
     $this->drupalLogout();
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelScriptCode('789012'));
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelNoScriptCode('789012'));
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelNoScriptCode());
   }
 
   /**
@@ -70,13 +65,16 @@ class PageViewTest extends BrowserTestBase {
     $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
-    $this->drupalGet('');
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelScriptCode('789012'));
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelNoScriptCode('789012'));
+    /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
+    $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+
+    $this->drupalGet('<front>');
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelNoScriptCode());
 
     $this->drupalLogout();
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelScriptCode('789012'));
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelNoScriptCode('789012'));
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelNoScriptCode());
   }
 
   /**
@@ -88,13 +86,16 @@ class PageViewTest extends BrowserTestBase {
     $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
+    /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
+    $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+
     $this->drupalGet('<front>');
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode('567123'));
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+    $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());
 
     $this->drupalLogout();
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode('567123'));
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+    $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());
   }
 
   /**
@@ -108,13 +109,16 @@ class PageViewTest extends BrowserTestBase {
     $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
+    /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
+    $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+
     $this->drupalGet('<front>');
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode('567123'));
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+    $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());
 
     $this->drupalLogout();
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelScriptCode('567123'));
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelNoScriptCode());
 
     $this->drupalLogin($this->user);
     $edit['pixel_enabled'] = TRUE;
@@ -125,12 +129,12 @@ class PageViewTest extends BrowserTestBase {
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->drupalGet('<front>');
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelScriptCode('567123'));
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelNoScriptCode());
 
     $this->drupalLogout();
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode('567123'));
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+    $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());
 
     $this->drupalLogin($this->user);
     $edit['pixel_enabled'] = TRUE;
@@ -141,12 +145,12 @@ class PageViewTest extends BrowserTestBase {
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->drupalGet('<front>');
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelScriptCode('567123'));
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelNoScriptCode());
 
     $this->drupalLogout();
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelScriptCode('567123'));
-    $this->assertSession()->responseNotContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelNoScriptCode());
 
     $this->drupalLogin($this->user);
     $edit['pixel_enabled'] = TRUE;
@@ -157,12 +161,12 @@ class PageViewTest extends BrowserTestBase {
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->drupalGet('<front>');
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode('567123'));
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+    $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());
 
     $this->drupalLogout();
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode('567123'));
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+    $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());
   }
 
 }

@@ -19,16 +19,8 @@ class AlterHooksTest extends BrowserTestBase {
    */
   public static $modules = [
     'node',
-    'taxonomy',
     'simple_facebook_pixel',
   ];
-
-  /**
-   * The pixel builder service.
-   *
-   * @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface
-   */
-  protected $pixelBuilder;
 
   /**
    * {@inheritdoc}
@@ -58,11 +50,13 @@ class AlterHooksTest extends BrowserTestBase {
     $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
+    /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
+    $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+
     $this->drupalGet('/node/1');
-    $this->pixelBuilder = \Drupal::service('simple_facebook_pixel.pixel_builder');
     $this->assertSession()->responseContains('"content_name":"Test page #1"');
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode());
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode());
+    $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());
 
     $this->container->get('module_installer')->install(['simple_facebook_pixel_test_hooks']);
     // @todo Remove invalidation once https://www.drupal.org/project/drupal/issues/2783791 is fixed.
