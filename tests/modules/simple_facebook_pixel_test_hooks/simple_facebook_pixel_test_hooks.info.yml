@@ -1,6 +1,6 @@
 name: 'Simple Facebook Pixel Test Hooks'
 type: module
-description: 'Support module for Simple Facebook Pixel tests, tests all the hooks.'
+description: 'Support module for testing Simple Facebook Pixel.'
 core: 8.x
 package: Testing
 hidden: true

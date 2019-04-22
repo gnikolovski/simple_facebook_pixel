@@ -18,6 +18,8 @@ class AlterHooksTest extends BrowserTestBase {
    * @var array
    */
   public static $modules = [
+    'node',
+    'taxonomy',
     'simple_facebook_pixel',
   ];
 
@@ -39,7 +41,11 @@ class AlterHooksTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($account);
 
-    $this->pixelBuilder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+    $this->drupalCreateContentType([
+      'type' => 'page',
+      'name' => 'Basic page',
+    ]);
+    $this->createNode(['title' => 'Test page #1', 'type' => 'page']);
   }
 
   /**
@@ -48,25 +54,30 @@ class AlterHooksTest extends BrowserTestBase {
   public function testAlterHooks() {
     $edit['pixel_enabled'] = TRUE;
     $edit['pixel_id'] = '567123';
+    $edit['view_content_entities[node:page]'] = TRUE;
     $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->drupalGet('<front>');
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode('567123'));
-    $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode('567123'));
+    $this->pixelBuilder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+    $this->assertSession()->responseContains($this->pixelBuilder->getPixelScriptCode());
+    $this->assertSession()->responseContains($this->pixelBuilder->getPixelNoScriptCode());
 
     $this->container->get('module_installer')->install(['simple_facebook_pixel_test_hooks']);
     // @todo Remove invalidation once https://www.drupal.org/project/drupal/issues/2783791 is fixed.
     Cache::invalidateTags(['rendered']);
 
-    $altered_pixel_script_code = 'Altered script code';
-    $altered_pixel_noscript_code = 'Altered noscript code';
+    $altered_events_code = 'Altered title';
+    $altered_pixel_script_code = 'Appended script code text';
+    $altered_pixel_noscript_code = 'Appended noscript code text';
 
-    $this->drupalGet('<front>');
+    $this->drupalGet('/node/1');
+    $this->assertSession()->responseContains($altered_events_code);
     $this->assertSession()->responseContains($altered_pixel_script_code);
     $this->assertSession()->responseContains($altered_pixel_noscript_code);
 
     $this->drupalLogout();
+    $this->assertSession()->responseContains($altered_events_code);
     $this->assertSession()->responseContains($altered_pixel_script_code);
     $this->assertSession()->responseContains($altered_pixel_noscript_code);
   }
