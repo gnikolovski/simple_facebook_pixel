@@ -16,6 +16,7 @@ Supported Pixel events at the moment:
   * PageView (all pages)
   * ViewContent (node, taxonomy term and commerce product pages)
   * InitiateCheckout
+  * Purchase
 
 
 REQUIREMENTS

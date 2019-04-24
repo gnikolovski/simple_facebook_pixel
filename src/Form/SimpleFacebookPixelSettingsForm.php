@@ -155,6 +155,27 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ],
     ];
 
+    $form['events']['purchase_notice'] = [
+      '#type' => 'markup',
+      '#markup' => '<strong>' . $this->t('Purchase') . '</strong>',
+      '#states' => [
+        'visible' => [
+          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $form['events']['purchase_enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable'),
+      '#default_value' => $config->get('purchase_enabled'),
+      '#states' => [
+        'visible' => [
+          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -170,6 +191,7 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ->set('excluded_roles', $values['excluded_roles'])
       ->set('view_content_entities', $values['view_content_entities'])
       ->set('initiate_checkout_enabled', $values['initiate_checkout_enabled'])
+      ->set('purchase_enabled', $values['purchase_enabled'])
       ->save();
 
     parent::submitForm($form, $form_state);

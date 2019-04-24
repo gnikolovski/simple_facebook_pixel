@@ -23,3 +23,6 @@ simple_facebook_pixel.settings:
     initiate_checkout_enabled:
       type: boolean
       label: 'Enable'
+    purchase_enabled:
+      type: boolean
+      label: 'Enable'
