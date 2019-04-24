@@ -183,7 +183,7 @@ class PageContextService implements PageContextServiceInterface {
       return;
     }
 
-    $attributes = $this->request->attributes->all();dsm($attributes);
+    $attributes = $this->request->attributes->all();
 
     if (
       isset($attributes['_route']) &&
