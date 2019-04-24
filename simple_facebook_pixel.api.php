@@ -6,7 +6,7 @@
  */
 
 /**
- * Alter the event array.
+ * Alter the events array.
  *
  * @param array $events
  *   The events array.
