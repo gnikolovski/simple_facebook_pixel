@@ -184,7 +184,7 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
 
     if ($this->entityTypeManager->hasDefinition('commerce_product')) {
       $commerce_products = $this->entityTypeManager
-        ->getStorage('commerce_product')
+        ->getStorage('commerce_product_type')
         ->loadMultiple();
 
       foreach ($commerce_products as $commerce_product) {
