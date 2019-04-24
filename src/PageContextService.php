@@ -106,7 +106,7 @@ class PageContextService implements PageContextServiceInterface {
    * Populates events data for the current commerce product.
    */
   protected function populateCommerceProductData() {
-    if (!class_exists('Drupal\commerce_product\Entity\ProductInterface')) {
+    if (!class_exists('Drupal\commerce_product\Entity\Product')) {
       return;
     }
 
