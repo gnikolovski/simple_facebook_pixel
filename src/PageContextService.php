@@ -57,6 +57,7 @@ class PageContextService implements PageContextServiceInterface {
   public function populate() {
     $this->populateNodeData();
     $this->populateTaxonomyTermData();
+    $this->populateCommerceProductData();
   }
 
   /**
@@ -94,6 +95,33 @@ class PageContextService implements PageContextServiceInterface {
           'content_name' => $taxonomy_term->getName(),
           'content_type' => $taxonomy_term->bundle(),
           'content_ids' => [$taxonomy_term->id()],
+        ];
+
+        $this->pixelBuilder->addEvent('ViewContent', $data);
+      }
+    }
+  }
+
+  /**
+   * Populates events data for the current commerce product.
+   */
+  protected function populateCommerceProductData() {
+    if (!class_exists('Drupal\commerce_product\Entity\ProductInterface')) {
+      return;
+    }
+
+    $commerce_product = $this->request->attributes->get('commerce_product');
+
+    if ($commerce_product instanceof \Drupal\commerce_product\Entity\ProductInterface) {
+      $view_content_entities = array_values($this->configFactory->get('view_content_entities'));
+
+      if (in_array('commerce_product:' . $commerce_product->bundle(), $view_content_entities)) {
+        $data = [
+          'content_name' => $commerce_product->getTitle(),
+          'content_type' => 'product',
+          'content_ids' => [$commerce_product->getDefaultVariation()->getSku()],
+          'value' => $commerce_product->getDefaultVariation()->getPrice()->getNumber(),
+          'currency' => $commerce_product->getDefaultVariation()->getPrice()->getCurrencyCode(),
         ];
 
         $this->pixelBuilder->addEvent('ViewContent', $data);
