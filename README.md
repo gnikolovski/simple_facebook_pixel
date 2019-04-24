@@ -20,7 +20,8 @@ Supported Pixel events at the moment:
 REQUIREMENTS
 ------------
 
-No special requirements.
+Drupal Commerce is a soft dependency. Having this module installed is optional.
+If you have it installed, then you can use Commerce specific events.
 
 
 INSTALLATION
