@@ -20,3 +20,6 @@ simple_facebook_pixel.settings:
       sequence:
         type: string
         label: 'Entity'
+    initiate_checkout_enabled:
+      type: boolean
+      label: 'Enable'

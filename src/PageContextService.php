@@ -58,10 +58,11 @@ class PageContextService implements PageContextServiceInterface {
     $this->populateNodeData();
     $this->populateTaxonomyTermData();
     $this->populateCommerceProductData();
+    $this->populateInitiateCheckout();
   }
 
   /**
-   * Populates events data for the current node.
+   * Builds node view content event data.
    */
   protected function populateNodeData() {
     $node = $this->request->attributes->get('node');
@@ -82,7 +83,7 @@ class PageContextService implements PageContextServiceInterface {
   }
 
   /**
-   * Populates events data for the current taxonomy term.
+   * Builds taxonomy term view content event data.
    */
   protected function populateTaxonomyTermData() {
     $taxonomy_term = $this->request->attributes->get('taxonomy_term');
@@ -103,7 +104,7 @@ class PageContextService implements PageContextServiceInterface {
   }
 
   /**
-   * Populates events data for the current commerce product.
+   * Builds commerce product view content event data.
    */
   protected function populateCommerceProductData() {
     if (!class_exists('Drupal\commerce_product\Entity\Product')) {
@@ -126,6 +127,50 @@ class PageContextService implements PageContextServiceInterface {
 
         $this->pixelBuilder->addEvent('ViewContent', $data);
       }
+    }
+  }
+
+  /**
+   * Builds Initiate Checkout event data.
+   */
+  protected function populateInitiateCheckout() {
+    if (!$this->configFactory->get('initiate_checkout_enabled')) {
+      return;
+    }
+
+    $attributes = $this->request->attributes->all();
+
+    if (
+      isset($attributes['_route']) &&
+      $attributes['_route'] == 'commerce_checkout.form' &&
+      isset($attributes['step']) &&
+      $attributes['step'] == 'order_information'
+    ) {
+      /** @var \Drupal\commerce_order\Entity\Order $commerce_order */
+      $commerce_order = $attributes['commerce_order'];
+
+      $skus = [];
+      $contents = [];
+
+      /** @var \Drupal\commerce_order\Entity\OrderItem $item */
+      foreach ($commerce_order->getItems() as $item) {
+        $skus[] = $item->getPurchasedEntity()->getSku();
+
+        $contents[] = [
+          'id' => $item->getPurchasedEntity()->getSku(),
+          'quantity' => $item->getQuantity(),
+        ];
+      }
+
+      $data = [
+        'num_items' => count($commerce_order->getItems()),
+        'value' => $commerce_order->getTotalPrice()->getNumber(),
+        'currency' => $commerce_order->getTotalPrice()->getCurrencyCode(),
+        'content_ids' => $skus,
+        'contents' => $contents,
+      ];
+
+      $this->pixelBuilder->addEvent('InitiateCheckout', $data);
     }
   }
 

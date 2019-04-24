@@ -112,7 +112,7 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ],
     ];
 
-    $form['events']['notice'] = [
+    $form['events']['page_view_notice'] = [
       '#type' => 'markup',
       '#markup' => '<p>' . $this->t('PageView event is by default enabled on all pages. Other events can be enabled/disabled bellow.') . '</p>',
       '#states' => [
@@ -134,6 +134,27 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ],
     ];
 
+    $form['events']['initiate_checkout_notice'] = [
+      '#type' => 'markup',
+      '#markup' => '<strong>' . $this->t('Initiate Checkout') . '</strong>',
+      '#states' => [
+        'visible' => [
+          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $form['events']['initiate_checkout_enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable'),
+      '#default_value' => $config->get('initiate_checkout_enabled'),
+      '#states' => [
+        'visible' => [
+          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -148,6 +169,7 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ->set('pixel_id', $values['pixel_id'])
       ->set('excluded_roles', $values['excluded_roles'])
       ->set('view_content_entities', $values['view_content_entities'])
+      ->set('initiate_checkout_enabled', $values['initiate_checkout_enabled'])
       ->save();
 
     parent::submitForm($form, $form_state);

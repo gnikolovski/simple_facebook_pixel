@@ -14,7 +14,8 @@ Simple Facebook Pixel installs Facebook Pixel on your Drupal site.
 
 Supported Pixel events at the moment:
   * PageView (all pages)
-  * ViewContent (node and taxonomy term pages)
+  * ViewContent (node, taxonomy term and commerce product pages)
+  * InitiateCheckout
 
 
 REQUIREMENTS
