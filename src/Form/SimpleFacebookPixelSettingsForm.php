@@ -3,6 +3,7 @@
 namespace Drupal\simple_facebook_pixel\Form;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,13 +23,23 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
   protected $entityTypeManager;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * SimpleFacebookPixelSettingsForm constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler) {
     $this->entityTypeManager = $entity_type_manager;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -36,7 +47,8 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('module_handler')
     );
   }
 
@@ -134,47 +146,49 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ],
     ];
 
-    $form['events']['initiate_checkout_notice'] = [
-      '#type' => 'markup',
-      '#markup' => '<strong>' . $this->t('Initiate Checkout') . '</strong>',
-      '#states' => [
-        'visible' => [
-          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+    if (!$this->moduleHandler->moduleExists('commerce_checkout')) {
+      $form['events']['initiate_checkout_notice'] = [
+        '#type' => 'markup',
+        '#markup' => '<strong>' . $this->t('Initiate Checkout') . '</strong>',
+        '#states' => [
+          'visible' => [
+            ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+          ],
         ],
-      ],
-    ];
+      ];
 
-    $form['events']['initiate_checkout_enabled'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Enable'),
-      '#default_value' => $config->get('initiate_checkout_enabled'),
-      '#states' => [
-        'visible' => [
-          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+      $form['events']['initiate_checkout_enabled'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Enable'),
+        '#default_value' => $config->get('initiate_checkout_enabled'),
+        '#states' => [
+          'visible' => [
+            ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+          ],
         ],
-      ],
-    ];
+      ];
 
-    $form['events']['purchase_notice'] = [
-      '#type' => 'markup',
-      '#markup' => '<strong>' . $this->t('Purchase') . '</strong>',
-      '#states' => [
-        'visible' => [
-          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+      $form['events']['purchase_notice'] = [
+        '#type' => 'markup',
+        '#markup' => '<strong>' . $this->t('Purchase') . '</strong>',
+        '#states' => [
+          'visible' => [
+            ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+          ],
         ],
-      ],
-    ];
+      ];
 
-    $form['events']['purchase_enabled'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Enable'),
-      '#default_value' => $config->get('purchase_enabled'),
-      '#states' => [
-        'visible' => [
-          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+      $form['events']['purchase_enabled'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Enable'),
+        '#default_value' => $config->get('purchase_enabled'),
+        '#states' => [
+          'visible' => [
+            ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+          ],
         ],
-      ],
-    ];
+      ];
+    }
 
     return parent::buildForm($form, $form_state);
   }

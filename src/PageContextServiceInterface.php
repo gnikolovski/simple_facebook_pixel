@@ -8,8 +8,8 @@ namespace Drupal\simple_facebook_pixel;
 interface PageContextServiceInterface {
 
   /**
-   * Populates events data.
+   * Builds events data.
    */
-  public function populate();
+  public function build();
 
 }

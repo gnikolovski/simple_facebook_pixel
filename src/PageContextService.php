@@ -54,18 +54,18 @@ class PageContextService implements PageContextServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function populate() {
-    $this->populateNodeData();
-    $this->populateTaxonomyTermData();
-    $this->populateCommerceProductData();
-    $this->populateInitiateCheckout();
-    $this->populatePurchase();
+  public function build() {
+    $this->buildNodeData();
+    $this->buildTaxonomyTermData();
+    $this->buildCommerceProductData();
+    $this->buildInitiateCheckout();
+    $this->buildPurchase();
   }
 
   /**
    * Builds node view content event data.
    */
-  protected function populateNodeData() {
+  protected function buildNodeData() {
     $node = $this->request->attributes->get('node');
 
     if ($node instanceof NodeInterface) {
@@ -86,7 +86,7 @@ class PageContextService implements PageContextServiceInterface {
   /**
    * Builds taxonomy term view content event data.
    */
-  protected function populateTaxonomyTermData() {
+  protected function buildTaxonomyTermData() {
     $taxonomy_term = $this->request->attributes->get('taxonomy_term');
 
     if ($taxonomy_term instanceof TermInterface) {
@@ -107,7 +107,7 @@ class PageContextService implements PageContextServiceInterface {
   /**
    * Builds commerce product view content event data.
    */
-  protected function populateCommerceProductData() {
+  protected function buildCommerceProductData() {
     if (!class_exists('Drupal\commerce_product\Entity\Product')) {
       return;
     }
@@ -134,7 +134,7 @@ class PageContextService implements PageContextServiceInterface {
   /**
    * Builds Initiate Checkout event data.
    */
-  protected function populateInitiateCheckout() {
+  protected function buildInitiateCheckout() {
     if (!$this->configFactory->get('initiate_checkout_enabled')) {
       return;
     }
@@ -178,7 +178,7 @@ class PageContextService implements PageContextServiceInterface {
   /**
    * Builds Purchase event data.
    */
-  protected function populatePurchase() {
+  protected function buildPurchase() {
     if (!$this->configFactory->get('purchase_enabled')) {
       return;
     }
