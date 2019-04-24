@@ -78,7 +78,7 @@ function simple_facebook_pixel_is_enabled() {
   $current_user_roles = \Drupal::currentUser()->getRoles();
 
   // If the current user has any of excluded roles, then we are returning FALSE,
-  // which means that Facebook Pixel is not enabled.
+  // which means that Facebook Pixel will not enabled.
   foreach (array_values($excluded_roles) as $user_role) {
     if (in_array($user_role, $current_user_roles)) {
       return FALSE;
