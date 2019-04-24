@@ -146,7 +146,7 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ],
     ];
 
-    if (!$this->moduleHandler->moduleExists('commerce_checkout')) {
+    if ($this->moduleHandler->moduleExists('commerce_checkout')) {
       $form['events']['initiate_checkout_notice'] = [
         '#type' => 'markup',
         '#markup' => '<strong>' . $this->t('Initiate Checkout') . '</strong>',
