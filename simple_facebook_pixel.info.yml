@@ -4,3 +4,6 @@ description: 'Simple Facebook Pixel installs Facebook Pixel on your Drupal site.
 core: 8.x
 package: Statistics
 configure: simple_facebook_pixel.settings_form
+dependencies:
+  - drupal:node
+  - drupal:taxonomy
