@@ -199,14 +199,19 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
 
-    $this->config('simple_facebook_pixel.settings')
+    $config = $this->config('simple_facebook_pixel.settings')
       ->set('pixel_enabled', $values['pixel_enabled'])
       ->set('pixel_id', $values['pixel_id'])
       ->set('excluded_roles', $values['excluded_roles'])
-      ->set('view_content_entities', $values['view_content_entities'])
-      ->set('initiate_checkout_enabled', $values['initiate_checkout_enabled'])
-      ->set('purchase_enabled', $values['purchase_enabled'])
-      ->save();
+      ->set('view_content_entities', $values['view_content_entities']);
+
+    if ($this->moduleHandler->moduleExists('commerce_checkout')) {
+      $config
+        ->set('initiate_checkout_enabled', $values['initiate_checkout_enabled'])
+        ->set('purchase_enabled', $values['purchase_enabled']);
+    }
+
+    $config->save();
 
     parent::submitForm($form, $form_state);
   }
