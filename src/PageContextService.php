@@ -4,6 +4,7 @@ namespace Drupal\simple_facebook_pixel;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\node\NodeInterface;
+use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\TermInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -88,6 +89,11 @@ class PageContextService implements PageContextServiceInterface {
    */
   protected function buildTaxonomyTermData() {
     $taxonomy_term = $this->request->attributes->get('taxonomy_term');
+
+    // In some cases $taxonomy_term can be just term ID -- not a term object.
+    if (is_numeric($taxonomy_term)) {
+      $taxonomy_term = Term::load($taxonomy_term);
+    }
 
     if ($taxonomy_term instanceof TermInterface) {
       $view_content_entities = array_values($this->configFactory->get('view_content_entities'));
