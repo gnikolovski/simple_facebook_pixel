@@ -16,11 +16,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class PageContextService implements PageContextServiceInterface {
 
   /**
-   * The Pixel builder.
+   * The config.
    *
-   * @var \Drupal\simple_facebook_pixel\PixelBuilderService
+   * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $pixelBuilder;
+  protected $configFactory;
 
   /**
    * The request.
@@ -30,11 +30,11 @@ class PageContextService implements PageContextServiceInterface {
   protected $request;
 
   /**
-   * The config.
+   * The Pixel builder.
    *
-   * @var \Drupal\Core\Config\ImmutableConfig
+   * @var \Drupal\simple_facebook_pixel\PixelBuilderService
    */
-  protected $configFactory;
+  protected $pixelBuilder;
 
   /**
    * PageContextService constructor.
