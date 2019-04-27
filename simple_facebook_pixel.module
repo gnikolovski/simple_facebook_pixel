@@ -74,6 +74,12 @@ function simple_facebook_pixel_is_enabled() {
     return FALSE;
   }
 
+  $is_admin_route = \Drupal::service('router.admin_context')->isAdminRoute();
+  $exclude_admin_pages = $config->get('exclude_admin_pages');
+  if ($is_admin_route && $exclude_admin_pages) {
+    return FALSE;
+  }
+
   $excluded_roles = $config->get('excluded_roles');
   $current_user_roles = \Drupal::currentUser()->getRoles();
 

@@ -101,6 +101,12 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ],
     ];
 
+    $form['basic_settings']['exclude_admin_pages'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Exclude admin pages'),
+      '#default_value' => $config->get('exclude_admin_pages'),
+    ];
+
     $form['basic_settings']['excluded_roles'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Exclude Facebook Pixel for the following roles'),
@@ -202,6 +208,7 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
     $config = $this->config('simple_facebook_pixel.settings')
       ->set('pixel_enabled', $values['pixel_enabled'])
       ->set('pixel_id', $values['pixel_id'])
+      ->set('exclude_admin_pages', $values['exclude_admin_pages'])
       ->set('excluded_roles', $values['excluded_roles'])
       ->set('view_content_entities', $values['view_content_entities']);
 

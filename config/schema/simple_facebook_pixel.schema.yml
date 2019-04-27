@@ -8,6 +8,9 @@ simple_facebook_pixel.settings:
     pixel_id:
       type: string
       label: 'Facebook Pixel ID'
+    exclude_admin_pages:
+      type: boolean
+      label: 'Exclude admin pages'
     excluded_roles:
       type: sequence
       label: 'Exclude Facebook Pixel for the following roles'
