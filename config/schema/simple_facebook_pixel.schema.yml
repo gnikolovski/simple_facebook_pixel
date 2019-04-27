@@ -29,3 +29,6 @@ simple_facebook_pixel.settings:
     purchase_enabled:
       type: boolean
       label: 'Enable'
+    complete_registration_enabled:
+      type: boolean
+      label: 'Enable'

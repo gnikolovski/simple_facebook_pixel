@@ -73,6 +73,7 @@ class SettingsFormTest extends BrowserTestBase {
     $this->assertSession()->elementExists('css', '#edit-view-content-entities-nodearticle');
     $this->assertSession()->elementExists('css', '#edit-view-content-entities-nodepage');
     $this->assertSession()->elementExists('css', '#edit-view-content-entities-taxonomy-termtags');
+    $this->assertSession()->elementExists('css', '#edit-complete-registration-enabled');
     $this->assertSession()->buttonExists(t('Save configuration'));
   }
 
@@ -92,12 +93,14 @@ class SettingsFormTest extends BrowserTestBase {
     $edit['exclude_admin_pages'] = FALSE;
     $edit['excluded_roles[anonymous]'] = TRUE;
     $edit['excluded_roles[authenticated]'] = FALSE;
+    $edit['complete_registration_enabled'] = FALSE;
     $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->assertEquals(FALSE, $this->config('simple_facebook_pixel.settings')->get('pixel_enabled'));
     $this->assertEquals('456123', $this->config('simple_facebook_pixel.settings')->get('pixel_id'));
     $this->assertEquals(FALSE, $this->config('simple_facebook_pixel.settings')->get('exclude_admin_pages'));
+    $this->assertEquals(FALSE, $this->config('simple_facebook_pixel.settings')->get('complete_registration_enabled'));
     $roles = [
       'anonymous' => 'anonymous',
       'authenticated' => '0',
@@ -109,12 +112,14 @@ class SettingsFormTest extends BrowserTestBase {
     $edit['exclude_admin_pages'] = TRUE;
     $edit['excluded_roles[anonymous]'] = FALSE;
     $edit['excluded_roles[authenticated]'] = TRUE;
+    $edit['complete_registration_enabled'] = TRUE;
     $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('pixel_enabled'));
     $this->assertEquals('876321', $this->config('simple_facebook_pixel.settings')->get('pixel_id'));
     $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('exclude_admin_pages'));
+    $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('complete_registration_enabled'));
     $roles = [
       'anonymous' => '0',
       'authenticated' => 'authenticated',

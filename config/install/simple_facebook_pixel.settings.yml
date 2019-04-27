@@ -5,3 +5,4 @@ excluded_roles: {  }
 view_content_entities: {  }
 initiate_checkout_enabled: false
 purchase_enabled: false
+complete_registration_enabled: false

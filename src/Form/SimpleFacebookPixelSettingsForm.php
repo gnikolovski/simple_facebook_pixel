@@ -196,6 +196,27 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ];
     }
 
+    $form['events']['complete_registration_notice'] = [
+      '#type' => 'markup',
+      '#markup' => '<strong>' . $this->t('CompleteRegistration') . '</strong>',
+      '#states' => [
+        'visible' => [
+          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $form['events']['complete_registration_enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable'),
+      '#default_value' => $config->get('complete_registration_enabled'),
+      '#states' => [
+        'visible' => [
+          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -218,6 +239,7 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
         ->set('purchase_enabled', $values['purchase_enabled']);
     }
 
+    $config->set('complete_registration_enabled', $values['complete_registration_enabled']);
     $config->save();
 
     parent::submitForm($form, $form_state);
