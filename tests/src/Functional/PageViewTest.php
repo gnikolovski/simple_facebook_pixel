@@ -81,7 +81,7 @@ class PageViewTest extends BrowserTestBase {
    * Tests snippet insertion when Facebook Pixel is disabled for admin routes.
    */
   public function testDisablingForAdminRoutes() {
-    $edit['pixel_enabled'] = FALSE;
+    $edit['pixel_enabled'] = TRUE;
     $edit['pixel_id'] = '789012';
     $edit['exclude_admin_pages'] = FALSE;
     $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
@@ -89,8 +89,17 @@ class PageViewTest extends BrowserTestBase {
 
     /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
     $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
-
     $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
+
+    $edit['pixel_enabled'] = TRUE;
+    $edit['pixel_id'] = '789012';
+    $edit['exclude_admin_pages'] = TRUE;
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->assertSession()->responseContains('The configuration options have been saved.');
+
+    /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
+//    $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+    $this->assertSession()->responseNotContains($pixel_builder->getPixelScriptCode());
   }
 
   /**
