@@ -1,7 +1,7 @@
 services:
   simple_facebook_pixel.pixel_builder:
     class: Drupal\simple_facebook_pixel\PixelBuilderService
-    arguments: ['@config.factory', '@module_handler']
+    arguments: ['@config.factory', '@module_handler', '@tempstore.private']
   simple_facebook_pixel.page_context:
     class: Drupal\simple_facebook_pixel\PageContextService
     arguments: ['@config.factory', '@request_stack', '@simple_facebook_pixel.pixel_builder']

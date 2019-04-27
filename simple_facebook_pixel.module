@@ -9,6 +9,7 @@
  */
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
@@ -59,6 +60,29 @@ function simple_facebook_pixel_page_attachments(array &$page) {
   ],
     'simple_facebook_pixel_noscript_code',
   ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function simple_facebook_pixel_user_insert(EntityInterface $entity) {
+  if (!simple_facebook_pixel_is_enabled()) {
+    return;
+  }
+
+  $config = \Drupal::config('simple_facebook_pixel.settings');
+  $complete_registration_enabled = $config->get('complete_registration_enabled');
+  if (!$complete_registration_enabled) {
+    return;
+  }
+
+  /** @var \Drupal\simple_facebook_pixel\PixelBuilderService $pixel_builder */
+  $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+  $data = [
+    'content_name' => 'registration',
+    'status' => 'complete',
+  ];
+  $pixel_builder->addEvent('CompleteRegistration', $data, TRUE);
 }
 
 /**
