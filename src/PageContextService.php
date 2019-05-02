@@ -123,7 +123,10 @@ class PageContextService implements PageContextServiceInterface {
     if ($commerce_product instanceof \Drupal\commerce_product\Entity\ProductInterface) {
       $view_content_entities = array_values($this->configFactory->get('view_content_entities'));
 
-      if (in_array('commerce_product:' . $commerce_product->bundle(), $view_content_entities)) {
+      if (
+        in_array('commerce_product:' . $commerce_product->bundle(), $view_content_entities) &&
+        $commerce_product->getDefaultVariation()
+      ) {
         $data = [
           'content_name' => $commerce_product->getTitle(),
           'content_type' => 'product',
