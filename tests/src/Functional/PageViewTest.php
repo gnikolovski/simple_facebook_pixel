@@ -96,9 +96,6 @@ class PageViewTest extends BrowserTestBase {
     $edit['exclude_admin_pages'] = TRUE;
     $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
     $this->assertSession()->responseContains('The configuration options have been saved.');
-
-    /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
-//    $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
     $this->assertSession()->responseNotContains($pixel_builder->getPixelScriptCode());
   }
 
