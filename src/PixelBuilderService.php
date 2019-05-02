@@ -4,6 +4,7 @@ namespace Drupal\simple_facebook_pixel;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
 
 /**
  * Class PixelBuilderService.
@@ -37,6 +38,13 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
   protected $moduleHandler;
 
   /**
+   * The private temp store.
+   *
+   * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
+   */
+  protected $privateTempStore;
+
+  /**
    * An array of events.
    *
    * @var array
@@ -50,10 +58,13 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
    *   The config factory.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $private_temp_store
+   *   The private temp store.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler) {
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler, PrivateTempStoreFactory $private_temp_store) {
     $this->pixelId = $config_factory->get('simple_facebook_pixel.settings')->get('pixel_id');
     $this->moduleHandler = $module_handler;
+    $this->privateTempStore = $private_temp_store->get('simple_facebook_pixel');
   }
 
   /**
@@ -63,12 +74,21 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
    *   The event name.
    * @param string|array $data
    *   The event data.
+   * @param bool $use_store
+   *   If set to true, an event will be stored in Private Temp Store.
    */
-  public function addEvent($event, $data) {
-    self::$events[] = [
+  public function addEvent($event, $data, $use_store = FALSE) {
+    $event_data = [
       'event' => $event,
       'data' => $data,
     ];
+
+    if ($use_store) {
+      $this->privateTempStore->set('events', [$event_data]);
+    }
+    else {
+      self::$events[] = $event_data;
+    }
   }
 
   /**
@@ -78,7 +98,25 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
    *   An array of events.
    */
   public function getEvents() {
-    return array_unique(self::$events, SORT_REGULAR);
+    $static_events = self::$events;
+    $stored_events = $this->getStoredEvents();
+    $events = array_merge($static_events, $stored_events);
+
+    return array_unique($events, SORT_REGULAR);
+  }
+
+  /**
+   * Gets events stored in Private Temp Store.
+   */
+  protected function getStoredEvents() {
+    $events = $this->privateTempStore->get('events');
+
+    try {
+      $this->privateTempStore->delete('events');
+    }
+    catch (\Exception $ex) {}
+
+    return $events ?: [];
   }
 
   /**
