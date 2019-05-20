@@ -3,8 +3,8 @@
 namespace Drupal\simple_facebook_pixel;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeInterface;
-use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\TermInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -37,6 +37,13 @@ class PageContextService implements PageContextServiceInterface {
   protected $pixelBuilder;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * PageContextService constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -45,11 +52,14 @@ class PageContextService implements PageContextServiceInterface {
    *   The request.
    * @param \Drupal\simple_facebook_pixel\PixelBuilderService $pixel_builder
    *   The Pixel builder.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, RequestStack $request_stack, PixelBuilderService $pixel_builder) {
+  public function __construct(ConfigFactoryInterface $config_factory, RequestStack $request_stack, PixelBuilderService $pixel_builder, EntityTypeManagerInterface $entity_type_manager) {
     $this->configFactory = $config_factory->get('simple_facebook_pixel.settings');
     $this->request = $request_stack->getCurrentRequest();
     $this->pixelBuilder = $pixel_builder;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -92,7 +102,9 @@ class PageContextService implements PageContextServiceInterface {
 
     // In some cases $taxonomy_term can be just term ID -- not a term object.
     if (is_numeric($taxonomy_term)) {
-      $taxonomy_term = Term::load($taxonomy_term);
+      $taxonomy_term = $this->entityTypeManager
+        ->getStorage('taxonomy_term')
+        ->load($taxonomy_term);
     }
 
     if ($taxonomy_term instanceof TermInterface) {
