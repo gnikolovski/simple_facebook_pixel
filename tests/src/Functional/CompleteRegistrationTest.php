@@ -56,6 +56,9 @@ class CompleteRegistrationTest extends BrowserTestBase {
 
     $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
     $this->assertSession()->responseContains('CompleteRegistration');
+
+    $this->drupalGet('<front>');
+    $this->assertSession()->responseNotContains('CompleteRegistration');
   }
 
   /**

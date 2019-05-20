@@ -32,7 +32,8 @@ function simple_facebook_pixel_help($route_name, RouteMatchInterface $route_matc
 function simple_facebook_pixel_page_attachments(array &$page) {
   $config = \Drupal::config('simple_facebook_pixel.settings');
   $page_cache_tags = isset($page['#cache']['tags']) ? $page['#cache']['tags'] : [];
-  $page['#cache']['tags'] = Cache::mergeTags($page_cache_tags, $config->getCacheTags());
+  $cache_tags = Cache::mergeTags($page_cache_tags, $config->getCacheTags());
+  $page['#cache']['tags'] = Cache::mergeTags($cache_tags, ['simple_facebook_pixel:complete_registration']);
 
   if (!simple_facebook_pixel_is_enabled()) {
     return;
