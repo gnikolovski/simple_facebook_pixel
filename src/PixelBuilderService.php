@@ -114,7 +114,8 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
     try {
       $this->privateTempStore->delete('events');
     }
-    catch (\Exception $ex) {}
+    catch (\Exception $ex) {
+    }
 
     return $events ?: [];
   }
