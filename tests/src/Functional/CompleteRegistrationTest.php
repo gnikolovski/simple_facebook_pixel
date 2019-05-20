@@ -46,8 +46,8 @@ class CompleteRegistrationTest extends BrowserTestBase {
       ->set('complete_registration_enabled', TRUE)
       ->save();
 
-    $edit['name'] = $name = $this->randomMachineName();
-    $edit['mail'] = $mail = $edit['name'] . '@example.com';
+    $edit['name'] = $this->randomMachineName();
+    $edit['mail'] = $edit['name'] . '@example.com';
     $this->drupalPostForm('user/register', $edit, t('Create new account'));
     $this->assertText(t('A welcome message with further instructions has been sent to your email address.'));
 
@@ -71,8 +71,8 @@ class CompleteRegistrationTest extends BrowserTestBase {
       ->set('complete_registration_enabled', FALSE)
       ->save();
 
-    $edit['name'] = $name = $this->randomMachineName();
-    $edit['mail'] = $mail = $edit['name'] . '@example.com';
+    $edit['name'] = $this->randomMachineName();
+    $edit['mail'] = $edit['name'] . '@example.com';
     $this->drupalPostForm('user/register', $edit, t('Create new account'));
     $this->assertText(t('A welcome message with further instructions has been sent to your email address.'));
 

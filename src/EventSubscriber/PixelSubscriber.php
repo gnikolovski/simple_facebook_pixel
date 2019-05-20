@@ -17,7 +17,7 @@ class PixelSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  static function getSubscribedEvents() {
+  public static function getSubscribedEvents() {
     $events[KernelEvents::RESPONSE][] = ['onResponse'];
     return $events;
   }
