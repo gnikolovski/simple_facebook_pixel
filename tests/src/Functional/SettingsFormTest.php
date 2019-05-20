@@ -84,7 +84,7 @@ class SettingsFormTest extends BrowserTestBase {
     $this->drupalGet('admin/modules');
     $this->assertSession()->responseContains('admin/config/system/simple-facebook-pixel');
 
-    $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('pixel_enabled'));
+    $this->assertEquals(FALSE, $this->config('simple_facebook_pixel.settings')->get('pixel_enabled'));
     $this->assertEquals('', $this->config('simple_facebook_pixel.settings')->get('pixel_id'));
     $this->assertEquals([], $this->config('simple_facebook_pixel.settings')->get('excluded_roles'));
 

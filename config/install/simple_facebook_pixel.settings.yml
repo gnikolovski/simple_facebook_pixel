@@ -1,4 +1,4 @@
-pixel_enabled: true
+pixel_enabled: false
 pixel_id: ''
 exclude_admin_pages: true
 excluded_roles: {  }

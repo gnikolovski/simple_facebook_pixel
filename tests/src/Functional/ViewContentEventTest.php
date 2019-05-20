@@ -70,6 +70,7 @@ class ViewContentEventTest extends BrowserTestBase {
    */
   public function testForNodes() {
     $this->configFactory->getEditable('simple_facebook_pixel.settings')
+      ->set('pixel_enabled', TRUE)
       ->set('pixel_id', '1234567890')
       ->set('view_content_entities.node:article', 'node:article')
       ->set('view_content_entities.node:page', 'node:page')
@@ -153,6 +154,7 @@ class ViewContentEventTest extends BrowserTestBase {
    */
   public function testForTaxonomyTerms() {
     $this->configFactory->getEditable('simple_facebook_pixel.settings')
+      ->set('pixel_enabled', TRUE)
       ->set('pixel_id', '1234567890')
       ->set('view_content_entities.taxonomy_term:tags', 'taxonomy_term:tags')
       ->set('view_content_entities.taxonomy_term:categories', 'taxonomy_term:categories')
