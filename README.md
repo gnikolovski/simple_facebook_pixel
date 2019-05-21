@@ -18,6 +18,8 @@ Supported Pixel events at the moment:
   * InitiateCheckout
   * Purchase
   * CompleteRegistration
+  * AddToCart
+  * AddToWishlist
 
 
 REQUIREMENTS
