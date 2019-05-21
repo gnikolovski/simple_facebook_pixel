@@ -36,6 +36,7 @@ function simple_facebook_pixel_page_attachments(array &$page) {
   $page['#cache']['tags'] = Cache::mergeTags($cache_tags, [
     'simple_facebook_pixel:complete_registration',
     'simple_facebook_pixel:add_to_cart',
+    'simple_facebook_pixel:add_to_wishlist',
   ]);
 
   if (!simple_facebook_pixel_is_enabled()) {

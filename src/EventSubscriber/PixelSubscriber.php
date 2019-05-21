@@ -4,6 +4,7 @@ namespace Drupal\simple_facebook_pixel\EventSubscriber;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\simple_facebook_pixel\PixelBuilderService;
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -38,6 +39,7 @@ class PixelSubscriber implements EventSubscriberInterface {
   public static function getSubscribedEvents() {
     $events[KernelEvents::RESPONSE][] = ['onKernelResponse'];
     $events['commerce_cart.entity.add'][] = ['addToCartEvent'];
+    $events['commerce_wishlist.entity.add'][] = ['addToWishlist'];
     return $events;
   }
 
@@ -54,13 +56,53 @@ class PixelSubscriber implements EventSubscriberInterface {
     if (strpos($response->getContent(), '"track", "AddToCart"') !== FALSE) {
       Cache::invalidateTags(['simple_facebook_pixel:add_to_cart']);
     }
+
+    if (strpos($response->getContent(), '"track", "AddToWishlist"') !== FALSE) {
+      Cache::invalidateTags(['simple_facebook_pixel:add_to_wishlist']);
+    }
   }
 
   /**
-   * @param $event
+   * Adds AddToCart event.
+   *
+   * @param \Symfony\Component\EventDispatcher\Event $event
+   *   The add to cart event.
    */
-  public function addToCartEvent($event) {
+  public function addToCartEvent(Event $event) {
     $product_variation = $event->getEntity();
+    $quantity = $event->getQuantity();
+
+    $this->addItem($product_variation, $quantity, 'AddToCart');
+  }
+
+  /**
+   * Adds AddToWishlist event.
+   *
+   * @param \Symfony\Component\EventDispatcher\Event $event
+   *   The add to wishlist event.
+   */
+  public function addToWishlist(Event $event) {
+    $product_variation = $event->getEntity();
+    $quantity = $event->getQuantity();
+
+    $this->addItem($product_variation, $quantity, 'AddToWishlist');
+  }
+
+  /**
+   * Adds an event.
+   *
+   * @param \Drupal\commerce\PurchasableEntityInterface $product_variation
+   *   The product variation.
+   * @param float $quantity
+   *   The quantity added.
+   * @param string $event_name
+   *   The Facebook Pixel event name.
+   */
+  protected function addItem($product_variation, $quantity, $event_name) {
+    $contents[] = [
+      'id' => $product_variation->getSku(),
+      'quantity' => $quantity,
+    ];
 
     $data = [
       'content_name' => $product_variation->getProduct()->getTitle(),
@@ -68,9 +110,10 @@ class PixelSubscriber implements EventSubscriberInterface {
       'content_ids' => [$product_variation->getSku()],
       'value' => $product_variation->getPrice()->getNumber(),
       'currency' => $product_variation->getPrice()->getCurrencyCode(),
+      'contents' => $contents,
     ];
 
-    $this->pixelBuilder->addEvent('AddToCart', $data, TRUE);
+    $this->pixelBuilder->addEvent($event_name, $data, TRUE);
   }
 
 }
