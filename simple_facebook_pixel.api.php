@@ -13,7 +13,7 @@
  */
 function hook_simple_facebook_pixel_events_alter(array &$events) {
   if (isset($events[0]['data']['content_name'])) {
-    $events[0]['data']['content_name'] = 'Altered title';
+    $events[0]['data']['content_name'] = 'Altered name';
   }
 }
 
