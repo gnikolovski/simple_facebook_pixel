@@ -7,5 +7,6 @@ services:
     arguments: ['@config.factory', '@request_stack', '@simple_facebook_pixel.pixel_builder', '@entity_type.manager']
   simple_facebook_pixel.pixel_subscriber:
     class: Drupal\simple_facebook_pixel\EventSubscriber\PixelSubscriber
+    arguments: ['@simple_facebook_pixel.pixel_builder']
     tags:
       - { name: event_subscriber }
