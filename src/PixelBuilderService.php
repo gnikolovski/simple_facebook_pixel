@@ -26,11 +26,11 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
   const FACEBOOK_PIXEL_CODE_NOSCRIPT = '<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id={{pixel_id}}&ev=PageView&noscript=1"/></noscript>';
 
   /**
-   * The config.
+   * The config factory.
    *
-   * @var \Drupal\Core\Config\ImmutableConfig
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $config;
+  protected $configFactory;
 
   /**
    * The current user.
@@ -82,7 +82,7 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
    *   The private temp store.
    */
   public function __construct(ConfigFactoryInterface $config_factory, AccountProxyInterface $current_user, AdminContext $router_admin_context, ModuleHandlerInterface $module_handler, PrivateTempStoreFactory $private_temp_store) {
-    $this->config = $config_factory->get('simple_facebook_pixel.settings');
+    $this->configFactory = $config_factory;
     $this->currentUser = $current_user;
     $this->routerAdminContext = $router_admin_context;
     $this->moduleHandler = $module_handler;
@@ -146,7 +146,7 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
    * {@inheritdoc}
    */
   public function getPixelScriptCode() {
-    $pixel_script_code = str_replace('{{pixel_id}}', $this->config->get('pixel_id'), self::FACEBOOK_PIXEL_CODE_SCRIPT);
+    $pixel_script_code = str_replace('{{pixel_id}}', $this->configFactory->get('simple_facebook_pixel.settings')->get('pixel_id'), self::FACEBOOK_PIXEL_CODE_SCRIPT);
 
     $events = $this->getEvents();
     // Allow other modules to alter the events array.
@@ -166,7 +166,7 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
    * {@inheritdoc}
    */
   public function getPixelNoScriptCode() {
-    $no_script_code = str_replace('{{pixel_id}}', $this->config->get('pixel_id'), self::FACEBOOK_PIXEL_CODE_NOSCRIPT);
+    $no_script_code = str_replace('{{pixel_id}}', $this->configFactory->get('simple_facebook_pixel.settings')->get('pixel_id'), self::FACEBOOK_PIXEL_CODE_NOSCRIPT);
     // Allow other modules to alter the noscript code.
     $this->moduleHandler->alter('simple_facebook_pixel_noscript_code', $no_script_code);
 
@@ -177,20 +177,20 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
    * Checks if Facebook Pixel is enabled.
    */
   public function isEnabled() {
-    $pixel_enabled = $this->config->get('pixel_enabled');
-    $pixel_id = $this->config->get('pixel_id');
+    $pixel_enabled = $this->configFactory->get('simple_facebook_pixel.settings')->get('pixel_enabled');
+    $pixel_id = $this->configFactory->get('simple_facebook_pixel.settings')->get('pixel_id');
 
     if (!$pixel_enabled || !$pixel_id) {
       return FALSE;
     }
 
     $is_admin_route = $this->routerAdminContext->isAdminRoute();
-    $exclude_admin_pages = $this->config->get('exclude_admin_pages');
+    $exclude_admin_pages = $this->configFactory->get('simple_facebook_pixel.settings')->get('exclude_admin_pages');
     if ($is_admin_route && $exclude_admin_pages) {
       return FALSE;
     }
 
-    $excluded_roles = $this->config->get('excluded_roles');
+    $excluded_roles = $this->configFactory->get('simple_facebook_pixel.settings')->get('excluded_roles');
     $current_user_roles = $this->currentUser->getRoles();
 
     // If the current user has any of excluded roles, then we are returning
