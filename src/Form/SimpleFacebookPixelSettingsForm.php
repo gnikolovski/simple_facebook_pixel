@@ -152,6 +152,27 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ],
     ];
 
+    $form['events']['complete_registration_notice'] = [
+      '#type' => 'markup',
+      '#markup' => '<strong>' . $this->t('CompleteRegistration') . '</strong>',
+      '#states' => [
+        'visible' => [
+          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $form['events']['complete_registration_enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable'),
+      '#default_value' => $config->get('complete_registration_enabled'),
+      '#states' => [
+        'visible' => [
+          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     if ($this->moduleHandler->moduleExists('commerce_checkout')) {
       $form['events']['initiate_checkout_notice'] = [
         '#type' => 'markup',
@@ -196,9 +217,9 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ];
     }
 
-    $form['events']['complete_registration_notice'] = [
+    $form['events']['add_to_cart_notice'] = [
       '#type' => 'markup',
-      '#markup' => '<strong>' . $this->t('CompleteRegistration') . '</strong>',
+      '#markup' => '<strong>' . $this->t('AddToCart') . '</strong>',
       '#states' => [
         'visible' => [
           ':input[name="pixel_enabled"]' => ['checked' => TRUE],
@@ -206,10 +227,31 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ],
     ];
 
-    $form['events']['complete_registration_enabled'] = [
+    $form['events']['add_to_cart_enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable'),
-      '#default_value' => $config->get('complete_registration_enabled'),
+      '#default_value' => $config->get('add_to_cart_enabled'),
+      '#states' => [
+        'visible' => [
+          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $form['events']['add_to_wishlist_notice'] = [
+      '#type' => 'markup',
+      '#markup' => '<strong>' . $this->t('AddToWishlist') . '</strong>',
+      '#states' => [
+        'visible' => [
+          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $form['events']['add_to_wishlist_enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable (using Commerce Wishlist module)'),
+      '#default_value' => $config->get('add_to_wishlist_enabled'),
       '#states' => [
         'visible' => [
           ':input[name="pixel_enabled"]' => ['checked' => TRUE],
@@ -231,15 +273,21 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ->set('pixel_id', $values['pixel_id'])
       ->set('exclude_admin_pages', $values['exclude_admin_pages'])
       ->set('excluded_roles', $values['excluded_roles'])
-      ->set('view_content_entities', $values['view_content_entities']);
+      ->set('view_content_entities', $values['view_content_entities'])
+      ->set('complete_registration_enabled', $values['complete_registration_enabled']);
 
     if ($this->moduleHandler->moduleExists('commerce_checkout')) {
       $config
         ->set('initiate_checkout_enabled', $values['initiate_checkout_enabled'])
-        ->set('purchase_enabled', $values['purchase_enabled']);
+        ->set('purchase_enabled', $values['purchase_enabled'])
+        ->set('add_to_cart_enabled', $values['add_to_cart_enabled']);
     }
 
-    $config->set('complete_registration_enabled', $values['complete_registration_enabled']);
+    if ($this->moduleHandler->moduleExists('commerce_wishlist')) {
+      $config
+        ->set('add_to_wishlist_enabled', $values['add_to_wishlist_enabled']);
+    }
+
     $config->save();
 
     parent::submitForm($form, $form_state);

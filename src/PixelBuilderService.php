@@ -4,6 +4,8 @@ namespace Drupal\simple_facebook_pixel;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Routing\AdminContext;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 
 /**
@@ -24,11 +26,25 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
   const FACEBOOK_PIXEL_CODE_NOSCRIPT = '<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id={{pixel_id}}&ev=PageView&noscript=1"/></noscript>';
 
   /**
-   * The Pixel ID.
+   * The config.
    *
-   * @var string
+   * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $pixelId;
+  protected $config;
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
+   * The route admin context.
+   *
+   * @var \Drupal\Core\Routing\AdminContext
+   */
+  protected $routerAdminContext;
 
   /**
    * The module handler.
@@ -56,13 +72,19 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The config factory.
+   * @param \Drupal\Core\Routing\AdminContext $router_admin_context
+   *   The route admin context.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $private_temp_store
    *   The private temp store.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler, PrivateTempStoreFactory $private_temp_store) {
-    $this->pixelId = $config_factory->get('simple_facebook_pixel.settings')->get('pixel_id');
+  public function __construct(ConfigFactoryInterface $config_factory, AccountProxyInterface $current_user, AdminContext $router_admin_context, ModuleHandlerInterface $module_handler, PrivateTempStoreFactory $private_temp_store) {
+    $this->config = $config_factory->get('simple_facebook_pixel.settings');
+    $this->currentUser = $current_user;
+    $this->routerAdminContext = $router_admin_context;
     $this->moduleHandler = $module_handler;
     $this->privateTempStore = $private_temp_store->get('simple_facebook_pixel');
   }
@@ -124,7 +146,7 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
    * {@inheritdoc}
    */
   public function getPixelScriptCode() {
-    $pixel_script_code = str_replace('{{pixel_id}}', $this->pixelId, self::FACEBOOK_PIXEL_CODE_SCRIPT);
+    $pixel_script_code = str_replace('{{pixel_id}}', $this->config->get('pixel_id'), self::FACEBOOK_PIXEL_CODE_SCRIPT);
 
     $events = $this->getEvents();
     // Allow other modules to alter the events array.
@@ -144,11 +166,42 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
    * {@inheritdoc}
    */
   public function getPixelNoScriptCode() {
-    $no_script_code = str_replace('{{pixel_id}}', $this->pixelId, self::FACEBOOK_PIXEL_CODE_NOSCRIPT);
+    $no_script_code = str_replace('{{pixel_id}}', $this->config->get('pixel_id'), self::FACEBOOK_PIXEL_CODE_NOSCRIPT);
     // Allow other modules to alter the noscript code.
     $this->moduleHandler->alter('simple_facebook_pixel_noscript_code', $no_script_code);
 
     return $no_script_code;
+  }
+
+  /**
+   * Checks if Facebook Pixel is enabled.
+   */
+  public function isEnabled() {
+    $pixel_enabled = $this->config->get('pixel_enabled');
+    $pixel_id = $this->config->get('pixel_id');
+
+    if (!$pixel_enabled || !$pixel_id) {
+      return FALSE;
+    }
+
+    $is_admin_route = $this->routerAdminContext->isAdminRoute();
+    $exclude_admin_pages = $this->config->get('exclude_admin_pages');
+    if ($is_admin_route && $exclude_admin_pages) {
+      return FALSE;
+    }
+
+    $excluded_roles = $this->config->get('excluded_roles');
+    $current_user_roles = $this->currentUser->getRoles();
+
+    // If the current user has any of excluded roles, then we are returning
+    // FALSE, which means that Facebook Pixel will not enabled.
+    foreach (array_values($excluded_roles) as $user_role) {
+      if (in_array($user_role, $current_user_roles)) {
+        return FALSE;
+      }
+    }
+
+    return TRUE;
   }
 
 }

@@ -3,6 +3,7 @@
 namespace Drupal\simple_facebook_pixel\EventSubscriber;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\simple_facebook_pixel\PixelBuilderService;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -17,6 +18,13 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class PixelSubscriber implements EventSubscriberInterface {
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected $configFactory;
+
+  /**
    * The Pixel builder.
    *
    * @var \Drupal\simple_facebook_pixel\PixelBuilderService
@@ -26,10 +34,13 @@ class PixelSubscriber implements EventSubscriberInterface {
   /**
    * PixelSubscriber constructor.
    *
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory.
    * @param \Drupal\simple_facebook_pixel\PixelBuilderService $pixel_builder
    *   The Pixel builder.
    */
-  public function __construct(PixelBuilderService $pixel_builder) {
+  public function __construct(ConfigFactory $config_factory, PixelBuilderService $pixel_builder) {
+    $this->configFactory = $config_factory->get('simple_facebook_pixel.settings');
     $this->pixelBuilder = $pixel_builder;
   }
 
@@ -69,10 +80,11 @@ class PixelSubscriber implements EventSubscriberInterface {
    *   The add to cart event.
    */
   public function addToCartEvent(Event $event) {
-    $product_variation = $event->getEntity();
-    $quantity = $event->getQuantity();
-
-    $this->addItem($product_variation, $quantity, 'AddToCart');
+    if ($this->pixelBuilder->isEnabled() && $this->configFactory->get('add_to_cart_enabled')) {
+      $product_variation = $event->getEntity();
+      $quantity = $event->getQuantity();
+      $this->addItem($product_variation, $quantity, 'AddToCart');
+    }
   }
 
   /**
@@ -82,10 +94,11 @@ class PixelSubscriber implements EventSubscriberInterface {
    *   The add to wishlist event.
    */
   public function addToWishlist(Event $event) {
-    $product_variation = $event->getEntity();
-    $quantity = $event->getQuantity();
-
-    $this->addItem($product_variation, $quantity, 'AddToWishlist');
+    if ($this->pixelBuilder->isEnabled() && $this->configFactory->get('add_to_wishlist_enabled')) {
+      $product_variation = $event->getEntity();
+      $quantity = $event->getQuantity();
+      $this->addItem($product_variation, $quantity, 'AddToWishlist');
+    }
   }
 
   /**

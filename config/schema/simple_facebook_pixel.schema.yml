@@ -23,12 +23,18 @@ simple_facebook_pixel.settings:
       sequence:
         type: string
         label: 'Entity'
+    complete_registration_enabled:
+      type: boolean
+      label: 'Enable'
     initiate_checkout_enabled:
       type: boolean
       label: 'Enable'
     purchase_enabled:
       type: boolean
       label: 'Enable'
-    complete_registration_enabled:
+    add_to_cart_enabled:
+      type: boolean
+      label: 'Enable'
+    add_to_wishlist_enabled:
       type: boolean
       label: 'Enable'

@@ -39,7 +39,9 @@ function simple_facebook_pixel_page_attachments(array &$page) {
     'simple_facebook_pixel:add_to_wishlist',
   ]);
 
-  if (!simple_facebook_pixel_is_enabled()) {
+  /** @var \Drupal\simple_facebook_pixel\PixelBuilderService $pixel_builder */
+  $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+  if (!$pixel_builder->isEnabled()) {
     return;
   }
 
@@ -47,8 +49,6 @@ function simple_facebook_pixel_page_attachments(array &$page) {
   $page_context = \Drupal::service('simple_facebook_pixel.page_context');
   $page_context->build();
 
-  /** @var \Drupal\simple_facebook_pixel\PixelBuilderService $pixel_builder */
-  $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
   $pixel_script_code = $pixel_builder->getPixelScriptCode();
   $pixel_noscript_code = $pixel_builder->getPixelNoScriptCode();
 
@@ -71,7 +71,9 @@ function simple_facebook_pixel_page_attachments(array &$page) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function simple_facebook_pixel_user_insert(EntityInterface $entity) {
-  if (!simple_facebook_pixel_is_enabled()) {
+  /** @var \Drupal\simple_facebook_pixel\PixelBuilderService $pixel_builder */
+  $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+  if (!$pixel_builder->isEnabled()) {
     return;
   }
 
@@ -81,44 +83,9 @@ function simple_facebook_pixel_user_insert(EntityInterface $entity) {
     return;
   }
 
-  /** @var \Drupal\simple_facebook_pixel\PixelBuilderService $pixel_builder */
-  $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
   $data = [
     'content_name' => 'registration',
     'status' => 'complete',
   ];
   $pixel_builder->addEvent('CompleteRegistration', $data, TRUE);
-}
-
-/**
- * Checks if Facebook Pixel is enabled.
- */
-function simple_facebook_pixel_is_enabled() {
-  $config = \Drupal::config('simple_facebook_pixel.settings');
-
-  $pixel_enabled = $config->get('pixel_enabled');
-  $pixel_id = $config->get('pixel_id');
-
-  if (!$pixel_enabled || !$pixel_id) {
-    return FALSE;
-  }
-
-  $is_admin_route = \Drupal::service('router.admin_context')->isAdminRoute();
-  $exclude_admin_pages = $config->get('exclude_admin_pages');
-  if ($is_admin_route && $exclude_admin_pages) {
-    return FALSE;
-  }
-
-  $excluded_roles = $config->get('excluded_roles');
-  $current_user_roles = \Drupal::currentUser()->getRoles();
-
-  // If the current user has any of excluded roles, then we are returning FALSE,
-  // which means that Facebook Pixel will not enabled.
-  foreach (array_values($excluded_roles) as $user_role) {
-    if (in_array($user_role, $current_user_roles)) {
-      return FALSE;
-    }
-  }
-
-  return TRUE;
 }
