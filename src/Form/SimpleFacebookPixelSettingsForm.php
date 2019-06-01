@@ -238,7 +238,10 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ];
     }
 
-    if ($this->moduleHandler->moduleExists('commerce_wishlist')) {
+    if (
+      $this->moduleHandler->moduleExists('commerce_wishlist') ||
+      $this->moduleHandler->moduleExists('flag')
+    ) {
       $form['events']['add_to_wishlist_notice'] = [
         '#type' => 'markup',
         '#markup' => '<strong>' . $this->t('AddToWishlist') . '</strong>',
@@ -248,7 +251,9 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
           ],
         ],
       ];
+    }
 
+    if ($this->moduleHandler->moduleExists('commerce_wishlist')) {
       $form['events']['add_to_wishlist_enabled'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Enable (using Commerce Wishlist module)'),
