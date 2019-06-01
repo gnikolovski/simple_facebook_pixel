@@ -2,6 +2,8 @@
 
 namespace Drupal\simple_facebook_pixel\EventSubscriber;
 
+use Drupal\commerce_product\Entity\Product;
+use Drupal\commerce_product\Entity\ProductVariation;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\simple_facebook_pixel\PixelBuilderService;
@@ -51,6 +53,7 @@ class PixelSubscriber implements EventSubscriberInterface {
     $events[KernelEvents::RESPONSE][] = ['onKernelResponse'];
     $events['commerce_cart.entity.add'][] = ['addToCartEvent'];
     $events['commerce_wishlist.entity.add'][] = ['addToWishlist'];
+    $events['flag.entity_flagged'][] = ['addToWishlistFlag'];
     return $events;
   }
 
@@ -88,7 +91,7 @@ class PixelSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Adds AddToWishlist event.
+   * Adds AddToWishlist event. Using Commerce Wishlist module.
    *
    * @param \Symfony\Component\EventDispatcher\Event $event
    *   The add to wishlist event.
@@ -98,6 +101,29 @@ class PixelSubscriber implements EventSubscriberInterface {
       $product_variation = $event->getEntity();
       $quantity = $event->getQuantity();
       $this->addItem($product_variation, $quantity, 'AddToWishlist');
+    }
+  }
+
+  /**
+   * Adds AddToWishlist event. Using Flag module.
+   *
+   * @param \Symfony\Component\EventDispatcher\Event $event
+   *   The add to wishlist event.
+   */
+  public function addToWishlistFlag(Event $event) {
+    if ($this->pixelBuilder->isEnabled() && $this->configFactory->get('add_to_wishlist_flag_enabled')) {
+      $enabled_flags = array_filter(array_values($this->configFactory->get('add_to_wishlist_flag_list')));
+
+      if (in_array($event->getFlagging()->getFlagId(), $enabled_flags)) {
+        $entity = $event->getFlagging()->getFlaggable();
+
+        if ($entity instanceof Product) {
+          $this->addItem($entity->getDefaultVariation(), 1, 'AddToWishlist');
+        }
+        elseif ($entity instanceof ProductVariation) {
+          $this->addItem($entity, $entity->getQuantity(), 'AddToWishlist');
+        }
+      }
     }
   }
 

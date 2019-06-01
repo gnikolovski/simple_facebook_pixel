@@ -215,49 +215,83 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
           ],
         ],
       ];
+
+      $form['events']['add_to_cart_notice'] = [
+        '#type' => 'markup',
+        '#markup' => '<strong>' . $this->t('AddToCart') . '</strong>',
+        '#states' => [
+          'visible' => [
+            ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+          ],
+        ],
+      ];
+
+      $form['events']['add_to_cart_enabled'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Enable'),
+        '#default_value' => $config->get('add_to_cart_enabled'),
+        '#states' => [
+          'visible' => [
+            ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+          ],
+        ],
+      ];
     }
 
-    $form['events']['add_to_cart_notice'] = [
-      '#type' => 'markup',
-      '#markup' => '<strong>' . $this->t('AddToCart') . '</strong>',
-      '#states' => [
-        'visible' => [
-          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+    if ($this->moduleHandler->moduleExists('commerce_wishlist')) {
+      $form['events']['add_to_wishlist_notice'] = [
+        '#type' => 'markup',
+        '#markup' => '<strong>' . $this->t('AddToWishlist') . '</strong>',
+        '#states' => [
+          'visible' => [
+            ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+          ],
         ],
-      ],
-    ];
+      ];
 
-    $form['events']['add_to_cart_enabled'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Enable'),
-      '#default_value' => $config->get('add_to_cart_enabled'),
-      '#states' => [
-        'visible' => [
-          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+      $form['events']['add_to_wishlist_enabled'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Enable (using Commerce Wishlist module)'),
+        '#default_value' => $config->get('add_to_wishlist_enabled'),
+        '#states' => [
+          'visible' => [
+            ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+          ],
         ],
-      ],
-    ];
+      ];
+    }
 
-    $form['events']['add_to_wishlist_notice'] = [
-      '#type' => 'markup',
-      '#markup' => '<strong>' . $this->t('AddToWishlist') . '</strong>',
-      '#states' => [
-        'visible' => [
-          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+    if ($this->moduleHandler->moduleExists('flag')) {
+      $form['events']['add_to_wishlist_flag_enabled'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Enable (using Flag module)'),
+        '#default_value' => $config->get('add_to_wishlist_flag_enabled'),
+        '#states' => [
+          'visible' => [
+            ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+          ],
         ],
-      ],
-    ];
+      ];
 
-    $form['events']['add_to_wishlist_enabled'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Enable (using Commerce Wishlist module)'),
-      '#default_value' => $config->get('add_to_wishlist_enabled'),
-      '#states' => [
-        'visible' => [
-          ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+      $form['events']['add_to_wishlist_flag_list'] = [
+        '#type' => 'checkboxes',
+        '#options' => $this->getFlags(),
+        '#title' => $this->t('Available flags'),
+        '#default_value' => $config->get('add_to_wishlist_flag_list'),
+        '#states' => [
+          'visible' => [
+            ':input[name="pixel_enabled"]' => ['checked' => TRUE],
+          ],
+          'visible' => [
+            ':input[name="add_to_wishlist_flag_enabled"]' => ['checked' => TRUE],
+          ],
         ],
-      ],
-    ];
+        '#prefix' => '<div class="available-flags">',
+        '#suffix' => '</div>',
+      ];
+    }
+
+    $form['#attached']['library'][] = 'simple_facebook_pixel/simple_facebook_pixel.admin';
 
     return parent::buildForm($form, $form_state);
   }
@@ -286,6 +320,12 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
     if ($this->moduleHandler->moduleExists('commerce_wishlist')) {
       $config
         ->set('add_to_wishlist_enabled', $values['add_to_wishlist_enabled']);
+    }
+
+    if ($this->moduleHandler->moduleExists('flag')) {
+      $config
+        ->set('add_to_wishlist_flag_enabled', $values['add_to_wishlist_flag_enabled'])
+        ->set('add_to_wishlist_flag_list', $values['add_to_wishlist_flag_list']);
     }
 
     $config->save();
@@ -333,6 +373,32 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
     }
 
     return $result;
+  }
+
+  /**
+   * Gets a list of available flags.
+   *
+   * @return array
+   *   An array of flags.
+   */
+  protected function getFlags() {
+    $flags_list = [];
+
+    if ($this->moduleHandler->moduleExists('flag')) {
+      $commerce_product_flags = \Drupal::service('flag')
+        ->getAllFlags('commerce_product');
+
+      $commerce_product_variation_flags = \Drupal::service('flag')
+        ->getAllFlags('commerce_product_variation');
+
+      $flags = array_merge($commerce_product_flags, $commerce_product_variation_flags);
+
+      foreach ($flags as $flag) {
+        $flags_list[$flag->id()] = $flag->label();
+      }
+    }
+
+    return $flags_list;
   }
 
 }

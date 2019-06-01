@@ -8,3 +8,5 @@ initiate_checkout_enabled: false
 purchase_enabled: false
 add_to_cart_enabled: false
 add_to_wishlist_enabled: false
+add_to_wishlist_flag_enabled: false
+add_to_wishlist_flag_list: {  }

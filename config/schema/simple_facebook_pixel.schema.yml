@@ -38,3 +38,12 @@ simple_facebook_pixel.settings:
     add_to_wishlist_enabled:
       type: boolean
       label: 'Enable'
+    add_to_wishlist_flag_enabled:
+      type: boolean
+      label: 'Enable'
+    add_to_wishlist_flag_list:
+      type: sequence
+      label: 'Available flags'
+      sequence:
+        type: string
+        label: 'Flag ID'
