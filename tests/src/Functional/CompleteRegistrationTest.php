@@ -58,6 +58,7 @@ class CompleteRegistrationTest extends BrowserTestBase {
     $this->assertSession()->responseContains('CompleteRegistration');
 
     $this->drupalGet('<front>');
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseNotContains('CompleteRegistration');
   }
 

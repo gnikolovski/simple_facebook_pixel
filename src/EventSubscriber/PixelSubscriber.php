@@ -121,7 +121,7 @@ class PixelSubscriber implements EventSubscriberInterface {
           $this->addItem($entity->getDefaultVariation(), 1, 'AddToWishlist');
         }
         elseif ($entity instanceof ProductVariation) {
-          $this->addItem($entity, $entity->getQuantity(), 'AddToWishlist');
+          $this->addItem($entity, 1, 'AddToWishlist');
         }
       }
     }

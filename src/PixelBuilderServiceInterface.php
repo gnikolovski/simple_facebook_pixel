@@ -23,4 +23,12 @@ interface PixelBuilderServiceInterface {
    */
   public function getPixelNoScriptCode();
 
+  /**
+   * Checks if Facebook Pixel should be enabled.
+   *
+   * @return bool
+   *   True if enabled, False otherwise.
+   */
+  public function isEnabled();
+
 }

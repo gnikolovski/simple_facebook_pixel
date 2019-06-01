@@ -54,6 +54,7 @@ class AlterHooksTest extends BrowserTestBase {
     $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
 
     $this->drupalGet('/node/1');
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseContains('"content_name":"Test page #1"');
     $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
     $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());

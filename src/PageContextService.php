@@ -156,6 +156,10 @@ class PageContextService implements PageContextServiceInterface {
    * Builds Initiate Checkout event data.
    */
   protected function buildInitiateCheckout() {
+    if (!class_exists('Drupal\commerce_product\Entity\Product')) {
+      return;
+    }
+
     if (!$this->configFactory->get('initiate_checkout_enabled')) {
       return;
     }
@@ -200,6 +204,10 @@ class PageContextService implements PageContextServiceInterface {
    * Builds Purchase event data.
    */
   protected function buildPurchase() {
+    if (!class_exists('Drupal\commerce_product\Entity\Product')) {
+      return;
+    }
+
     if (!$this->configFactory->get('purchase_enabled')) {
       return;
     }

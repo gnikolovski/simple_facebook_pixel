@@ -83,9 +83,11 @@ class ViewContentEventTest extends BrowserTestBase {
 
     // Make sure that View Content is tracked.
     $this->drupalGet('/node/1');
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseContains('fbq("track", "ViewContent", {"content_name":"Test article #1","content_type":"article","content_ids":["1"]});');
 
     $this->drupalGet('/node/2');
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseContains('fbq("track", "ViewContent", {"content_name":"Test article #2","content_type":"article","content_ids":["2"]});');
 
     // Create Page content type and two test nodes.
@@ -167,9 +169,11 @@ class ViewContentEventTest extends BrowserTestBase {
 
     // Make sure that View Content is tracked.
     $this->drupalGet('/taxonomy/term/1');
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseContains('fbq("track", "ViewContent", {"content_name":"Test term #1","content_type":"tags","content_ids":["1"]});');
 
     $this->drupalGet('/taxonomy/term/2');
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseContains('fbq("track", "ViewContent", {"content_name":"Test term #2","content_type":"tags","content_ids":["2"]});');
 
     // Create Categories vocabulary and two test terms.

@@ -174,7 +174,7 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
   }
 
   /**
-   * Checks if Facebook Pixel is enabled.
+   * {@inheritdoc}
    */
   public function isEnabled() {
     $pixel_enabled = $this->configFactory->get('simple_facebook_pixel.settings')->get('pixel_enabled');

@@ -44,6 +44,7 @@ class PageViewTest extends BrowserTestBase {
    */
   public function testFacebookPixelIdMissing() {
     $this->drupalGet('<front>');
+    $this->assertSession()->statusCodeEquals(200);
 
     /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
     $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
@@ -69,6 +70,7 @@ class PageViewTest extends BrowserTestBase {
     $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
 
     $this->drupalGet('<front>');
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseNotContains($pixel_builder->getPixelScriptCode());
     $this->assertSession()->responseNotContains($pixel_builder->getPixelNoScriptCode());
 
@@ -112,6 +114,7 @@ class PageViewTest extends BrowserTestBase {
     $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
 
     $this->drupalGet('<front>');
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
     $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());
 
@@ -135,6 +138,7 @@ class PageViewTest extends BrowserTestBase {
     $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
 
     $this->drupalGet('<front>');
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
     $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());
 
@@ -167,6 +171,7 @@ class PageViewTest extends BrowserTestBase {
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->drupalGet('<front>');
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseNotContains($pixel_builder->getPixelScriptCode());
     $this->assertSession()->responseNotContains($pixel_builder->getPixelNoScriptCode());
 
@@ -183,6 +188,7 @@ class PageViewTest extends BrowserTestBase {
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->drupalGet('<front>');
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
     $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());
 
