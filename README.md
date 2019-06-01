@@ -19,14 +19,15 @@ Supported Pixel events at the moment:
   * Purchase
   * CompleteRegistration
   * AddToCart
-  * AddToWishlist
+  * AddToWishlist (Commerce Wishlist/Flag implementation)
 
 
 REQUIREMENTS
 ------------
 
-Drupal Commerce is a soft dependency. Having this module installed is optional.
-If you have it installed, then you can use Commerce specific events.
+Drupal Commerce and Flag modules are soft dependencies. Having these modules
+installed is optional. If you have it installed, then you can use Commerce
+specific events.
 
 
 INSTALLATION
