@@ -47,7 +47,7 @@ class AlterHooksTest extends BrowserTestBase {
     $edit['pixel_enabled'] = TRUE;
     $edit['pixel_id'] = '567123';
     $edit['view_content_entities[node:page]'] = TRUE;
-    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, 'Save configuration');
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */

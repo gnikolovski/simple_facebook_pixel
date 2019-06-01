@@ -74,7 +74,7 @@ class SettingsFormTest extends BrowserTestBase {
     $this->assertSession()->elementExists('css', '#edit-view-content-entities-nodepage');
     $this->assertSession()->elementExists('css', '#edit-view-content-entities-taxonomy-termtags');
     $this->assertSession()->elementExists('css', '#edit-complete-registration-enabled');
-    $this->assertSession()->buttonExists(t('Save configuration'));
+    $this->assertSession()->buttonExists('Save configuration');
   }
 
   /**
@@ -94,7 +94,7 @@ class SettingsFormTest extends BrowserTestBase {
     $edit['excluded_roles[anonymous]'] = TRUE;
     $edit['excluded_roles[authenticated]'] = FALSE;
     $edit['complete_registration_enabled'] = FALSE;
-    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, 'Save configuration');
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->assertEquals(FALSE, $this->config('simple_facebook_pixel.settings')->get('pixel_enabled'));
@@ -113,7 +113,7 @@ class SettingsFormTest extends BrowserTestBase {
     $edit['excluded_roles[anonymous]'] = FALSE;
     $edit['excluded_roles[authenticated]'] = TRUE;
     $edit['complete_registration_enabled'] = TRUE;
-    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, 'Save configuration');
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('pixel_enabled'));
@@ -131,7 +131,7 @@ class SettingsFormTest extends BrowserTestBase {
     $edit['view_content_entities[node:article]'] = TRUE;
     $edit['view_content_entities[node:page]'] = FALSE;
     $edit['view_content_entities[taxonomy_term:tags]'] = TRUE;
-    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, 'Save configuration');
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('pixel_enabled'));

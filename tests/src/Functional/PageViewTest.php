@@ -63,7 +63,7 @@ class PageViewTest extends BrowserTestBase {
   public function testFacebookPixelDisabled() {
     $edit['pixel_enabled'] = FALSE;
     $edit['pixel_id'] = '789012';
-    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, 'Save configuration');
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
@@ -86,7 +86,7 @@ class PageViewTest extends BrowserTestBase {
     $edit['pixel_enabled'] = TRUE;
     $edit['pixel_id'] = '789012';
     $edit['exclude_admin_pages'] = FALSE;
-    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, 'Save configuration');
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
@@ -96,7 +96,7 @@ class PageViewTest extends BrowserTestBase {
     $edit['pixel_enabled'] = TRUE;
     $edit['pixel_id'] = '789012';
     $edit['exclude_admin_pages'] = TRUE;
-    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, 'Save configuration');
     $this->assertSession()->responseContains('The configuration options have been saved.');
     $this->assertSession()->responseNotContains($pixel_builder->getPixelScriptCode());
   }
@@ -107,7 +107,7 @@ class PageViewTest extends BrowserTestBase {
   public function testFacebookPixelEnabledForAllUsers() {
     $edit['pixel_enabled'] = TRUE;
     $edit['pixel_id'] = '567123';
-    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, 'Save configuration');
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
@@ -131,7 +131,7 @@ class PageViewTest extends BrowserTestBase {
     $edit['pixel_id'] = '567123';
     $edit['excluded_roles[anonymous]'] = TRUE;
     $edit['excluded_roles[authenticated]'] = FALSE;
-    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, 'Save configuration');
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
@@ -151,7 +151,7 @@ class PageViewTest extends BrowserTestBase {
     $edit['pixel_id'] = '567123';
     $edit['excluded_roles[anonymous]'] = FALSE;
     $edit['excluded_roles[authenticated]'] = TRUE;
-    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, 'Save configuration');
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->drupalGet('<front>');
@@ -167,7 +167,7 @@ class PageViewTest extends BrowserTestBase {
     $edit['pixel_id'] = '567123';
     $edit['excluded_roles[anonymous]'] = TRUE;
     $edit['excluded_roles[authenticated]'] = TRUE;
-    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, 'Save configuration');
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->drupalGet('<front>');
@@ -184,7 +184,7 @@ class PageViewTest extends BrowserTestBase {
     $edit['pixel_id'] = '567123';
     $edit['excluded_roles[anonymous]'] = FALSE;
     $edit['excluded_roles[authenticated]'] = FALSE;
-    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, 'Save configuration');
     $this->assertSession()->responseContains('The configuration options have been saved.');
 
     $this->drupalGet('<front>');

@@ -48,8 +48,8 @@ class CompleteRegistrationTest extends BrowserTestBase {
 
     $edit['name'] = $this->randomMachineName();
     $edit['mail'] = $edit['name'] . '@example.com';
-    $this->drupalPostForm('user/register', $edit, t('Create new account'));
-    $this->assertText(t('A welcome message with further instructions has been sent to your email address.'));
+    $this->drupalPostForm('user/register', $edit, 'Create new account');
+    $this->assertText('A welcome message with further instructions has been sent to your email address.');
 
     /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
     $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
@@ -74,8 +74,8 @@ class CompleteRegistrationTest extends BrowserTestBase {
 
     $edit['name'] = $this->randomMachineName();
     $edit['mail'] = $edit['name'] . '@example.com';
-    $this->drupalPostForm('user/register', $edit, t('Create new account'));
-    $this->assertText(t('A welcome message with further instructions has been sent to your email address.'));
+    $this->drupalPostForm('user/register', $edit, 'Create new account');
+    $this->assertText('A welcome message with further instructions has been sent to your email address.');
 
     /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
     $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');

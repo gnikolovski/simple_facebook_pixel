@@ -385,13 +385,8 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
     $flags_list = [];
 
     if ($this->moduleHandler->moduleExists('flag')) {
-      $commerce_product_flags = \Drupal::service('flag')
+      $flags = \Drupal::service('flag')
         ->getAllFlags('commerce_product');
-
-      $commerce_product_variation_flags = \Drupal::service('flag')
-        ->getAllFlags('commerce_product_variation');
-
-      $flags = array_merge($commerce_product_flags, $commerce_product_variation_flags);
 
       foreach ($flags as $flag) {
         $flags_list[$flag->id()] = $flag->label();

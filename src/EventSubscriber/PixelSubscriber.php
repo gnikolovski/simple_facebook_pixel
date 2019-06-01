@@ -2,8 +2,6 @@
 
 namespace Drupal\simple_facebook_pixel\EventSubscriber;
 
-use Drupal\commerce_product\Entity\Product;
-use Drupal\commerce_product\Entity\ProductVariation;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\simple_facebook_pixel\PixelBuilderService;
@@ -117,11 +115,8 @@ class PixelSubscriber implements EventSubscriberInterface {
       if (in_array($event->getFlagging()->getFlagId(), $enabled_flags)) {
         $entity = $event->getFlagging()->getFlaggable();
 
-        if ($entity instanceof Product) {
+        if ($entity instanceof \Drupal\commerce_product\Entity\ProductInterface) {
           $this->addItem($entity->getDefaultVariation(), 1, 'AddToWishlist');
-        }
-        elseif ($entity instanceof ProductVariation) {
-          $this->addItem($entity, 1, 'AddToWishlist');
         }
       }
     }
