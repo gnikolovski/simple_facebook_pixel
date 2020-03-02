@@ -3,7 +3,7 @@
 namespace Drupal\Tests\simple_facebook_pixel\Functional;
 
 use Drupal\Tests\BrowserTestBase;
-use Drupal\Tests\taxonomy\Functional\TaxonomyTestTrait;
+use Drupal\Tests\taxonomy\Traits\TaxonomyTestTrait;
 
 /**
  * Tests View Content event.

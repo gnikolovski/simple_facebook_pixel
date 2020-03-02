@@ -97,6 +97,7 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
     $form['basic_settings']['pixel_id'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Facebook Pixel ID'),
+      '#description' => $this->t('Your Facebook Pixel ID. Separate multiple Pixels with a comma.'),
       '#default_value' => $config->get('pixel_id'),
       '#required' => TRUE,
       '#states' => [
@@ -291,8 +292,6 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
         '#states' => [
           'visible' => [
             ':input[name="pixel_enabled"]' => ['checked' => TRUE],
-          ],
-          'visible' => [
             ':input[name="add_to_wishlist_flag_enabled"]' => ['checked' => TRUE],
           ],
         ],
