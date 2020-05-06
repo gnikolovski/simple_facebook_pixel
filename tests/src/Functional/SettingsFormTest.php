@@ -24,6 +24,11 @@ class SettingsFormTest extends BrowserTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * The user.
    *
    * @var \Drupal\user\Entity\User
