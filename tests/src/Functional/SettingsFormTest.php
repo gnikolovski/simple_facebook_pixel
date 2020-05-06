@@ -54,7 +54,7 @@ class SettingsFormTest extends BrowserTestBase {
       'vid' => 'tags',
     ])->save();
 
-    $account = $this->drupalCreateUser([
+    $this->user = $account = $this->drupalCreateUser([
       'administer modules',
       'administer simple facebook pixel',
     ]);
@@ -106,11 +106,14 @@ class SettingsFormTest extends BrowserTestBase {
     $this->assertEquals('456123', $this->config('simple_facebook_pixel.settings')->get('pixel_id'));
     $this->assertEquals(FALSE, $this->config('simple_facebook_pixel.settings')->get('exclude_admin_pages'));
     $this->assertEquals(FALSE, $this->config('simple_facebook_pixel.settings')->get('complete_registration_enabled'));
+    $user_roles = $this->user->getRoles(TRUE);
+    $user_role = reset($user_roles);
     $roles = [
       'anonymous' => 'anonymous',
       'authenticated' => '0',
+      $user_role => '0',
     ];
-    $this->assertArraySubset($roles, $this->config('simple_facebook_pixel.settings')->get('excluded_roles'));
+    $this->assertSame($roles, $this->config('simple_facebook_pixel.settings')->get('excluded_roles'));
 
     $edit['pixel_enabled'] = TRUE;
     $edit['pixel_id'] = '876321';
@@ -126,10 +129,11 @@ class SettingsFormTest extends BrowserTestBase {
     $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('exclude_admin_pages'));
     $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('complete_registration_enabled'));
     $roles = [
-      'anonymous' => '0',
       'authenticated' => 'authenticated',
+      'anonymous' => '0',
+      $user_role => '0',
     ];
-    $this->assertArraySubset($roles, $this->config('simple_facebook_pixel.settings')->get('excluded_roles'));
+    $this->assertSame($roles, $this->config('simple_facebook_pixel.settings')->get('excluded_roles'));
 
     $edit['pixel_enabled'] = TRUE;
     $edit['pixel_id'] = '876321';
@@ -143,10 +147,10 @@ class SettingsFormTest extends BrowserTestBase {
     $this->assertEquals('876321', $this->config('simple_facebook_pixel.settings')->get('pixel_id'));
     $view_content_entities = [
       'node:article' => 'node:article',
-      'node:page' => '0',
       'taxonomy_term:tags' => 'taxonomy_term:tags',
+      'node:page' => '0',
     ];
-    $this->assertArraySubset($view_content_entities, $this->config('simple_facebook_pixel.settings')->get('view_content_entities'));
+    $this->assertSame($view_content_entities, $this->config('simple_facebook_pixel.settings')->get('view_content_entities'));
   }
 
   /**
