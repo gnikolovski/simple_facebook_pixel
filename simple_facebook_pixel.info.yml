@@ -2,6 +2,7 @@ name: 'Simple Facebook Pixel'
 type: module
 description: 'Simple Facebook Pixel installs Facebook Pixel on your Drupal site.'
 core: 8.x
+core_version_requirement: ^8 || ^9
 package: Statistics
 configure: simple_facebook_pixel.settings_form
 dependencies:
