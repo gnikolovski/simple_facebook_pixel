@@ -26,8 +26,8 @@ REQUIREMENTS
 ------------
 
 Drupal Commerce and Flag modules are soft dependencies. Having these modules
-installed is optional. If you have it installed, then you can use Commerce
-specific events.
+installed is optional. If you have them installed, then you can use Commerce and
+Flag specific events.
 
 
 INSTALLATION
