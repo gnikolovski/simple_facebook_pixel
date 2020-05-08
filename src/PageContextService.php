@@ -180,10 +180,14 @@ class PageContextService implements PageContextServiceInterface {
 
       /** @var \Drupal\commerce_order\Entity\OrderItem $item */
       foreach ($commerce_order->getItems() as $item) {
-        $skus[] = $item->getPurchasedEntity()->getSku();
+        $purchased_entity = $item->getPurchasedEntity();
+        if (!$purchased_entity) {
+          continue;
+        }
 
+        $skus[] = $purchased_entity->getSku();
         $contents[] = [
-          'id' => $item->getPurchasedEntity()->getSku(),
+          'id' => $purchased_entity->getSku(),
           'quantity' => $item->getQuantity(),
         ];
       }
