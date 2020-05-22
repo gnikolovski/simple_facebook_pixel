@@ -70,7 +70,6 @@ class PageContextService implements PageContextServiceInterface {
     $this->buildTaxonomyTermData();
     $this->buildCommerceProductData();
     $this->buildInitiateCheckout();
-    $this->buildPurchase();
   }
 
   /**
@@ -201,55 +200,6 @@ class PageContextService implements PageContextServiceInterface {
       ];
 
       $this->pixelBuilder->addEvent('InitiateCheckout', $data);
-    }
-  }
-
-  /**
-   * Builds Purchase event data.
-   */
-  protected function buildPurchase() {
-    if (!class_exists('Drupal\commerce_product\Entity\Product')) {
-      return;
-    }
-
-    if (!$this->configFactory->get('purchase_enabled')) {
-      return;
-    }
-
-    $attributes = $this->request->attributes->all();
-
-    if (
-      isset($attributes['_route']) &&
-      $attributes['_route'] == 'commerce_checkout.form' &&
-      isset($attributes['step']) &&
-      $attributes['step'] == 'complete'
-    ) {
-      /** @var \Drupal\commerce_order\Entity\Order $commerce_order */
-      $commerce_order = $attributes['commerce_order'];
-
-      $skus = [];
-      $contents = [];
-
-      /** @var \Drupal\commerce_order\Entity\OrderItem $item */
-      foreach ($commerce_order->getItems() as $item) {
-        $skus[] = $item->getPurchasedEntity()->getSku();
-
-        $contents[] = [
-          'id' => $item->getPurchasedEntity()->getSku(),
-          'quantity' => $item->getQuantity(),
-        ];
-      }
-
-      $data = [
-        'num_items' => count($commerce_order->getItems()),
-        'value' => $commerce_order->getTotalPrice()->getNumber(),
-        'currency' => $commerce_order->getTotalPrice()->getCurrencyCode(),
-        'content_ids' => $skus,
-        'contents' => $contents,
-        'content_type' => 'product',
-      ];
-
-      $this->pixelBuilder->addEvent('Purchase', $data);
     }
   }
 

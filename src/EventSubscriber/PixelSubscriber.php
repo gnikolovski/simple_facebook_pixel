@@ -5,6 +5,7 @@ namespace Drupal\simple_facebook_pixel\EventSubscriber;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\simple_facebook_pixel\PixelBuilderService;
+use Drupal\state_machine\Event\WorkflowTransitionEvent;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -52,6 +53,7 @@ class PixelSubscriber implements EventSubscriberInterface {
     $events['commerce_cart.entity.add'][] = ['addToCartEvent'];
     $events['commerce_wishlist.entity.add'][] = ['addToWishlist'];
     $events['flag.entity_flagged'][] = ['addToWishlistFlag'];
+    $events['commerce_order.place.post_transition'][] = ['purchaseEvent', 50];
     return $events;
   }
 
@@ -71,6 +73,10 @@ class PixelSubscriber implements EventSubscriberInterface {
 
     if (strpos($response->getContent(), '"track", "AddToWishlist"') !== FALSE) {
       Cache::invalidateTags(['simple_facebook_pixel:add_to_wishlist']);
+    }
+
+    if (strpos($response->getContent(), '"track", "Purchase"') !== FALSE) {
+      Cache::invalidateTags(['simple_facebook_pixel:purchase']);
     }
   }
 
@@ -148,6 +154,42 @@ class PixelSubscriber implements EventSubscriberInterface {
     ];
 
     $this->pixelBuilder->addEvent($event_name, $data, TRUE);
+  }
+
+  /**
+   * Adds Purchase event.
+   *
+   * @param \Drupal\state_machine\Event\WorkflowTransitionEvent $event
+   *   The workflow transition event.
+   */
+  public function purchaseEvent(WorkflowTransitionEvent $event) {
+    if ($this->pixelBuilder->isEnabled() && $this->configFactory->get('purchase_enabled')) {
+      $commerce_order = $event->getEntity();
+
+      $skus = [];
+      $contents = [];
+
+      /** @var \Drupal\commerce_order\Entity\OrderItem $item */
+      foreach ($commerce_order->getItems() as $item) {
+        $skus[] = $item->getPurchasedEntity()->getSku();
+
+        $contents[] = [
+          'id' => $item->getPurchasedEntity()->getSku(),
+          'quantity' => $item->getQuantity(),
+        ];
+      }
+
+      $data = [
+        'num_items' => count($commerce_order->getItems()),
+        'value' => $commerce_order->getTotalPrice()->getNumber(),
+        'currency' => $commerce_order->getTotalPrice()->getCurrencyCode(),
+        'content_ids' => $skus,
+        'contents' => $contents,
+        'content_type' => 'product',
+      ];
+
+      $this->pixelBuilder->addEvent('Purchase', $data, TRUE);
+    }
   }
 
 }

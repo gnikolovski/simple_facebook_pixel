@@ -37,6 +37,7 @@ function simple_facebook_pixel_page_attachments(array &$page) {
     'simple_facebook_pixel:complete_registration',
     'simple_facebook_pixel:add_to_cart',
     'simple_facebook_pixel:add_to_wishlist',
+    'simple_facebook_pixel:purchase',
   ]);
 
   /** @var \Drupal\simple_facebook_pixel\PixelBuilderService $pixel_builder */
