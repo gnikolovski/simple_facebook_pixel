@@ -71,8 +71,10 @@ class SettingsFormTest extends BrowserTestBase {
     $this->assertSession()->titleEquals('Simple Facebook Pixel | Drupal');
     $this->assertSession()->elementExists('css', '#edit-pixel-enabled');
     $this->assertSession()->elementExists('css', '#edit-pixel-id');
+    $this->assertSession()->pageTextContains('Your Facebook Pixel ID. Separate multiple Pixels with a comma.');
     $this->assertSession()->elementExists('css', '#edit-exclude-admin-pages');
     $this->assertSession()->elementExists('css', '#edit-excluded-roles');
+    $this->assertSession()->pageTextContains('Exclude Facebook Pixel for the following roles.');
     $this->assertSession()->pageTextContains('PageView event is by default enabled on all pages. Other events can be enabled/disabled bellow.');
     $this->assertSession()->elementExists('css', '#edit-view-content-entities');
     $this->assertSession()->elementExists('css', '#edit-view-content-entities-nodearticle');

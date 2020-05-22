@@ -129,6 +129,31 @@ class PageViewTest extends BrowserTestBase {
   }
 
   /**
+   * Tests adding mutliple pixels.
+   */
+  public function testMultiFacebookPixelsEnabledForAllUsers() {
+    $edit['pixel_enabled'] = TRUE;
+    $edit['pixel_id'] = '567123, 985473';
+    $this->drupalPostForm('admin/config/system/simple-facebook-pixel', $edit, 'Save configuration');
+    $this->assertSession()->responseContains('The configuration options have been saved.');
+
+    /** @var \Drupal\simple_facebook_pixel\PixelBuilderServiceInterface $pixel_builder */
+    $pixel_builder = \Drupal::service('simple_facebook_pixel.pixel_builder');
+
+    $this->drupalGet('<front>');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseContains("fbq('init', '567123') fbq('init', '985473')");
+    $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());
+    $this->assertSession()->responseContains('https://www.facebook.com/tr?id=567123&ev=PageView&noscript=1');
+    $this->assertSession()->responseContains('https://www.facebook.com/tr?id=985473&ev=PageView&noscript=1');
+
+    $this->drupalLogout();
+    $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
+    $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());
+  }
+
+  /**
    * Tests snippet exclusion for selected roles.
    */
   public function testFacebookPixelExclusionForRoles() {

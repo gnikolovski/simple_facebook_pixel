@@ -115,7 +115,7 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
 
     $form['basic_settings']['excluded_roles'] = [
       '#type' => 'checkboxes',
-      '#title' => $this->t('Exclude Facebook Pixel for the following roles'),
+      '#title' => $this->t('Exclude Facebook Pixel for the following roles.'),
       '#options' => array_map('\Drupal\Component\Utility\Html::escape', user_role_names()),
       '#default_value' => $config->get('excluded_roles'),
       '#states' => [
