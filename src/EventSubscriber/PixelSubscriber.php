@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_facebook_pixel\EventSubscriber;
 
+use Drupal\commerce\Context;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\simple_facebook_pixel\PixelBuilderService;
@@ -33,6 +34,27 @@ class PixelSubscriber implements EventSubscriberInterface {
   protected $pixelBuilder;
 
   /**
+   * The current store.
+   *
+   * @var \Drupal\commerce_store\CurrentStoreInterface
+   */
+  protected $currentStore;
+
+  /**
+   * The chain base price resolver.
+   *
+   * @var \Drupal\commerce_price\Resolver\ChainPriceResolverInterface
+   */
+  protected $chainPriceResolver;
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
    * PixelSubscriber constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
@@ -43,6 +65,16 @@ class PixelSubscriber implements EventSubscriberInterface {
   public function __construct(ConfigFactory $config_factory, PixelBuilderService $pixel_builder) {
     $this->configFactory = $config_factory->get('simple_facebook_pixel.settings');
     $this->pixelBuilder = $pixel_builder;
+
+    if (
+      \Drupal::hasService('commerce_store.current_store') &&
+      \Drupal::hasService('commerce_price.chain_price_resolver') &&
+      \Drupal::hasService('current_user')
+    ) {
+      $this->currentStore = \Drupal::service('commerce_store.current_store');
+      $this->chainPriceResolver = \Drupal::service('commerce_price.chain_price_resolver');
+      $this->currentUser = \Drupal::service('current_user');
+    }
   }
 
   /**
@@ -144,12 +176,15 @@ class PixelSubscriber implements EventSubscriberInterface {
       'quantity' => $quantity,
     ];
 
+    $context = new Context($this->currentUser, $this->currentStore->getStore());
+    $resolved_price = $this->chainPriceResolver->resolve($product_variation, 1, $context);
+
     $data = [
       'content_name' => $product_variation->getProduct()->getTitle(),
       'content_type' => 'product',
       'content_ids' => [$product_variation->getSku()],
-      'value' => $product_variation->getPrice()->getNumber(),
-      'currency' => $product_variation->getPrice()->getCurrencyCode(),
+      'value' => $resolved_price->getNumber(),
+      'currency' => $resolved_price->getCurrencyCode(),
       'contents' => $contents,
     ];
 

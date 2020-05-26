@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_facebook_pixel;
 
+use Drupal\commerce\Context;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeInterface;
@@ -44,6 +45,27 @@ class PageContextService implements PageContextServiceInterface {
   protected $entityTypeManager;
 
   /**
+   * The current store.
+   *
+   * @var \Drupal\commerce_store\CurrentStoreInterface
+   */
+  protected $currentStore;
+
+  /**
+   * The chain base price resolver.
+   *
+   * @var \Drupal\commerce_price\Resolver\ChainPriceResolverInterface
+   */
+  protected $chainPriceResolver;
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
    * PageContextService constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -60,6 +82,16 @@ class PageContextService implements PageContextServiceInterface {
     $this->request = $request_stack->getCurrentRequest();
     $this->pixelBuilder = $pixel_builder;
     $this->entityTypeManager = $entity_type_manager;
+
+    if (
+      \Drupal::hasService('commerce_store.current_store') &&
+      \Drupal::hasService('commerce_price.chain_price_resolver') &&
+      \Drupal::hasService('current_user')
+    ) {
+      $this->currentStore = \Drupal::service('commerce_store.current_store');
+      $this->chainPriceResolver = \Drupal::service('commerce_price.chain_price_resolver');
+      $this->currentUser = \Drupal::service('current_user');
+    }
   }
 
   /**
@@ -138,12 +170,16 @@ class PageContextService implements PageContextServiceInterface {
         in_array('commerce_product:' . $commerce_product->bundle(), $view_content_entities) &&
         $commerce_product->getDefaultVariation()
       ) {
+        $product_variation = $commerce_product->getDefaultVariation();
+        $context = new Context($this->currentUser, $this->currentStore->getStore());
+        $resolved_price = $this->chainPriceResolver->resolve($product_variation, 1, $context);
+
         $data = [
           'content_name' => $commerce_product->getTitle(),
           'content_type' => 'product',
-          'content_ids' => [$commerce_product->getDefaultVariation()->getSku()],
-          'value' => $commerce_product->getDefaultVariation()->getPrice()->getNumber(),
-          'currency' => $commerce_product->getDefaultVariation()->getPrice()->getCurrencyCode(),
+          'content_ids' => [$product_variation->getSku()],
+          'value' => $resolved_price->getNumber(),
+          'currency' => $resolved_price->getCurrencyCode(),
         ];
 
         $this->pixelBuilder->addEvent('ViewContent', $data);
