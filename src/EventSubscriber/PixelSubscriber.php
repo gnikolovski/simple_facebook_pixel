@@ -211,6 +211,7 @@ class PixelSubscriber implements EventSubscriberInterface {
         $contents[] = [
           'id' => $item->getPurchasedEntity()->getSku(),
           'quantity' => $item->getQuantity(),
+          'item_price' => $item->getPurchasedEntity()->getPrice()->getNumber(),
         ];
       }
 
