@@ -11,6 +11,9 @@ simple_facebook_pixel.settings:
     exclude_admin_pages:
       type: boolean
       label: 'Exclude admin pages'
+    exclude_amp_pages:
+      type: boolean
+      label: 'Exclude AMP pages'
     excluded_roles:
       type: sequence
       label: 'Exclude Facebook Pixel for the following roles'

@@ -113,6 +113,13 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('exclude_admin_pages'),
     ];
 
+    $form['basic_settings']['exclude_amp_pages'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Exclude AMP pages'),
+      '#description' => $this->t('If you have the AMP module installed then tick this checkbox to prevent breaking the AMP validation.'),
+      '#default_value' => $config->get('exclude_amp_pages'),
+    ];
+
     $form['basic_settings']['excluded_roles'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Exclude Facebook Pixel for the following roles.'),
@@ -315,6 +322,7 @@ class SimpleFacebookPixelSettingsForm extends ConfigFormBase {
       ->set('pixel_enabled', $values['pixel_enabled'])
       ->set('pixel_id', $values['pixel_id'])
       ->set('exclude_admin_pages', $values['exclude_admin_pages'])
+      ->set('exclude_amp_pages', $values['exclude_amp_pages'])
       ->set('excluded_roles', $values['excluded_roles'])
       ->set('view_content_entities', $values['view_content_entities'])
       ->set('complete_registration_enabled', $values['complete_registration_enabled']);

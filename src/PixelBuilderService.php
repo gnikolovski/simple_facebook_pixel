@@ -201,6 +201,14 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
       return FALSE;
     }
 
+    if ($this->moduleHandler->moduleExists('amp')) {
+      $is_amp_route = \Drupal::service('router.amp_context')->isAmpRoute();
+      $exclude_amp_pages = $this->configFactory->get('simple_facebook_pixel.settings')->get('exclude_amp_pages');
+      if ($is_amp_route && $exclude_amp_pages) {
+        return FALSE;
+      }
+    }
+
     $excluded_roles = $this->configFactory->get('simple_facebook_pixel.settings')->get('excluded_roles');
     $current_user_roles = $this->currentUser->getRoles();
 

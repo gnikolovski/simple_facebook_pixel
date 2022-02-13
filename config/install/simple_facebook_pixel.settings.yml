@@ -1,6 +1,7 @@
 pixel_enabled: false
 pixel_id: ''
 exclude_admin_pages: true
+exclude_amp_pages: true
 excluded_roles: {  }
 view_content_entities: {  }
 complete_registration_enabled: false

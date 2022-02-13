@@ -98,6 +98,7 @@ class SettingsFormTest extends BrowserTestBase {
     $edit['pixel_enabled'] = FALSE;
     $edit['pixel_id'] = '456123';
     $edit['exclude_admin_pages'] = FALSE;
+    $edit['exclude_amp_pages'] = FALSE;
     $edit['excluded_roles[anonymous]'] = TRUE;
     $edit['excluded_roles[authenticated]'] = FALSE;
     $edit['complete_registration_enabled'] = FALSE;
@@ -107,6 +108,7 @@ class SettingsFormTest extends BrowserTestBase {
     $this->assertEquals(FALSE, $this->config('simple_facebook_pixel.settings')->get('pixel_enabled'));
     $this->assertEquals('456123', $this->config('simple_facebook_pixel.settings')->get('pixel_id'));
     $this->assertEquals(FALSE, $this->config('simple_facebook_pixel.settings')->get('exclude_admin_pages'));
+    $this->assertEquals(FALSE, $this->config('simple_facebook_pixel.settings')->get('exclude_amp_pages'));
     $this->assertEquals(FALSE, $this->config('simple_facebook_pixel.settings')->get('complete_registration_enabled'));
     $user_roles = $this->user->getRoles(TRUE);
     $user_role = reset($user_roles);
@@ -120,6 +122,7 @@ class SettingsFormTest extends BrowserTestBase {
     $edit['pixel_enabled'] = TRUE;
     $edit['pixel_id'] = '876321';
     $edit['exclude_admin_pages'] = TRUE;
+    $edit['exclude_amp_pages'] = TRUE;
     $edit['excluded_roles[anonymous]'] = FALSE;
     $edit['excluded_roles[authenticated]'] = TRUE;
     $edit['complete_registration_enabled'] = TRUE;
@@ -129,6 +132,7 @@ class SettingsFormTest extends BrowserTestBase {
     $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('pixel_enabled'));
     $this->assertEquals('876321', $this->config('simple_facebook_pixel.settings')->get('pixel_id'));
     $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('exclude_admin_pages'));
+    $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('exclude_amp_pages'));
     $this->assertEquals(TRUE, $this->config('simple_facebook_pixel.settings')->get('complete_registration_enabled'));
     $roles = [
       'authenticated' => 'authenticated',
