@@ -5,12 +5,13 @@ namespace Drupal\simple_facebook_pixel;
 use Drupal\commerce\Context;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Class PageContextService.
+ * Defines the Page Context Service class.
  *
  * @package Drupal\simple_facebook_pixel
  */
@@ -76,21 +77,27 @@ class PageContextService implements PageContextServiceInterface {
    *   The Pixel builder.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, RequestStack $request_stack, PixelBuilderService $pixel_builder, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    RequestStack $request_stack,
+    PixelBuilderService $pixel_builder,
+    EntityTypeManagerInterface $entity_type_manager,
+    AccountInterface $current_user) {
     $this->configFactory = $config_factory->get('simple_facebook_pixel.settings');
     $this->request = $request_stack->getCurrentRequest();
     $this->pixelBuilder = $pixel_builder;
     $this->entityTypeManager = $entity_type_manager;
+    $this->currentUser = $current_user;
 
     if (
       \Drupal::hasService('commerce_store.current_store') &&
-      \Drupal::hasService('commerce_price.chain_price_resolver') &&
-      \Drupal::hasService('current_user')
+      \Drupal::hasService('commerce_price.chain_price_resolver')
     ) {
       $this->currentStore = \Drupal::service('commerce_store.current_store');
       $this->chainPriceResolver = \Drupal::service('commerce_price.chain_price_resolver');
-      $this->currentUser = \Drupal::service('current_user');
     }
   }
 

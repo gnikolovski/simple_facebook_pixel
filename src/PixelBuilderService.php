@@ -9,7 +9,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 
 /**
- * Class PixelBuilderService.
+ * Defines the Pixel Builder Service class.
  *
  * @package Drupal\simple_facebook_pixel
  */

@@ -3,7 +3,7 @@
 namespace Drupal\simple_facebook_pixel;
 
 /**
- * Interface PixelBuilderServiceInterface.
+ * Defines the Pixel Builder Service interface.
  */
 interface PixelBuilderServiceInterface {
 

@@ -169,8 +169,14 @@ class ViewContentEventTest extends BrowserTestBase {
 
     // Create Tags vocabulary and two test terms.
     $tags_vocabulary = $this->createVocabulary();
-    $this->createTerm($tags_vocabulary, ['vid' => 'tags', 'name' => 'Test term #1']);
-    $this->createTerm($tags_vocabulary, ['vid' => 'tags', 'name' => 'Test term #2']);
+    $this->createTerm($tags_vocabulary, [
+      'vid' => 'tags',
+      'name' => 'Test term #1',
+    ]);
+    $this->createTerm($tags_vocabulary, [
+      'vid' => 'tags',
+      'name' => 'Test term #2',
+    ]);
 
     // Make sure that View Content is tracked.
     $this->drupalGet('/taxonomy/term/1');
@@ -183,8 +189,14 @@ class ViewContentEventTest extends BrowserTestBase {
 
     // Create Categories vocabulary and two test terms.
     $categories_vocabulary = $this->createVocabulary();
-    $this->createTerm($categories_vocabulary, ['vid' => 'categories', 'name' => 'Test term #3']);
-    $this->createTerm($categories_vocabulary, ['vid' => 'categories', 'name' => 'Test term #4']);
+    $this->createTerm($categories_vocabulary, [
+      'vid' => 'categories',
+      'name' => 'Test term #3',
+    ]);
+    $this->createTerm($categories_vocabulary, [
+      'vid' => 'categories',
+      'name' => 'Test term #4',
+    ]);
 
     // Make sure that View Content is tracked.
     $this->drupalGet('/taxonomy/term/3');

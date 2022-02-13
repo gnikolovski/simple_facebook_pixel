@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SimpleFacebookPixelSettingsForm.
+ * Defines the Simple Facebook Pixel Settings Form class.
  *
  * @package Drupal\simple_facebook_pixel\Form
  */

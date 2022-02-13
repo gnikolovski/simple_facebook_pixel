@@ -3,7 +3,7 @@
 namespace Drupal\simple_facebook_pixel;
 
 /**
- * Interface PageContextServiceInterface.
+ * Defines the  Page Context Service interface.
  */
 interface PageContextServiceInterface {
 

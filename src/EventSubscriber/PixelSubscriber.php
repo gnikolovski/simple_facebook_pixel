@@ -5,6 +5,7 @@ namespace Drupal\simple_facebook_pixel\EventSubscriber;
 use Drupal\commerce\Context;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\simple_facebook_pixel\PixelBuilderService;
 use Drupal\state_machine\Event\WorkflowTransitionEvent;
 use Symfony\Component\EventDispatcher\Event;
@@ -13,7 +14,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Class PixelSubscriber.
+ * Defines the Pixel Subscriber class.
  *
  * @package Drupal\simple_facebook_pixel\EventSubscriber
  */
@@ -61,19 +62,24 @@ class PixelSubscriber implements EventSubscriberInterface {
    *   The config factory.
    * @param \Drupal\simple_facebook_pixel\PixelBuilderService $pixel_builder
    *   The Pixel builder.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
    */
-  public function __construct(ConfigFactory $config_factory, PixelBuilderService $pixel_builder) {
+  public function __construct(
+    ConfigFactory $config_factory,
+    PixelBuilderService $pixel_builder,
+    AccountInterface $current_user
+  ) {
     $this->configFactory = $config_factory->get('simple_facebook_pixel.settings');
     $this->pixelBuilder = $pixel_builder;
+    $this->currentUser = $current_user;
 
     if (
       \Drupal::hasService('commerce_store.current_store') &&
-      \Drupal::hasService('commerce_price.chain_price_resolver') &&
-      \Drupal::hasService('current_user')
+      \Drupal::hasService('commerce_price.chain_price_resolver')
     ) {
       $this->currentStore = \Drupal::service('commerce_store.current_store');
       $this->chainPriceResolver = \Drupal::service('commerce_price.chain_price_resolver');
-      $this->currentUser = \Drupal::service('current_user');
     }
   }
 
