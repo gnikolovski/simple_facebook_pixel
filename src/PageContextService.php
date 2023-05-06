@@ -234,15 +234,17 @@ class PageContextService implements PageContextServiceInterface {
         ];
       }
 
-      $data = [
-        'num_items' => count($commerce_order->getItems()),
-        'value' => $commerce_order->getTotalPrice()->getNumber(),
-        'currency' => $commerce_order->getTotalPrice()->getCurrencyCode(),
-        'content_ids' => $skus,
-        'contents' => $contents,
-      ];
+      if (!empty($skus)) {
+        $data = [
+          'num_items' => count($commerce_order->getItems()),
+          'value' => $commerce_order->getTotalPrice()->getNumber(),
+          'currency' => $commerce_order->getTotalPrice()->getCurrencyCode(),
+          'content_ids' => $skus,
+          'contents' => $contents,
+        ];
 
-      $this->pixelBuilder->addEvent('InitiateCheckout', $data);
+        $this->pixelBuilder->addEvent('InitiateCheckout', $data);
+      }
     }
   }
 
