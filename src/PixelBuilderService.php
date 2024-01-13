@@ -148,7 +148,7 @@ class PixelBuilderService implements PixelBuilderServiceInterface {
   public function getPixelScriptCode() {
     $pixels = $this->getPixelIds();
     $pixels = array_map(function ($pixel_id) {
-      return "fbq('init', '" . trim($pixel_id) . "')";
+      return "fbq('init', '" . trim($pixel_id) . "');";
     }, $pixels);
     $pixels = implode(' ', $pixels);
 

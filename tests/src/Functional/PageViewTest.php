@@ -148,7 +148,7 @@ class PageViewTest extends BrowserTestBase {
     $this->drupalGet('<front>');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseContains($pixel_builder->getPixelScriptCode());
-    $this->assertSession()->responseContains("fbq('init', '567123') fbq('init', '985473')");
+    $this->assertSession()->responseContains("fbq('init', '567123'); fbq('init', '985473')");
     $this->assertSession()->responseContains($pixel_builder->getPixelNoScriptCode());
     $this->assertSession()->responseContains('https://www.facebook.com/tr?id=567123&ev=PageView&noscript=1');
     $this->assertSession()->responseContains('https://www.facebook.com/tr?id=985473&ev=PageView&noscript=1');
