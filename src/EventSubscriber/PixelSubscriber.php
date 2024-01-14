@@ -3,6 +3,7 @@
 namespace Drupal\simple_facebook_pixel\EventSubscriber;
 
 use Drupal\commerce\Context;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\Component\EventDispatcher\Event;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactory;
@@ -212,13 +213,17 @@ class PixelSubscriber implements EventSubscriberInterface {
 
       /** @var \Drupal\commerce_order\Entity\OrderItem $item */
       foreach ($commerce_order->getItems() as $item) {
-        $skus[] = $item->getPurchasedEntity()->getSku();
+        $purchased_entity = $item->getPurchasedEntity();
 
-        $contents[] = [
-          'id' => $item->getPurchasedEntity()->getSku(),
-          'quantity' => $item->getQuantity(),
-          'item_price' => $item->getPurchasedEntity()->getPrice()->getNumber(),
-        ];
+        if ($purchased_entity instanceof ProductVariationInterface) {
+          $skus[] = $purchased_entity->getSku();
+
+          $contents[] = [
+            'id' => $purchased_entity->getSku(),
+            'quantity' => $item->getQuantity(),
+            'item_price' => $purchased_entity->getPrice()->getNumber(),
+          ];
+        }
       }
 
       $data = [
