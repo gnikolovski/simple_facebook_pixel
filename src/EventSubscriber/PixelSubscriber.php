@@ -3,15 +3,15 @@
 namespace Drupal\simple_facebook_pixel\EventSubscriber;
 
 use Drupal\commerce\Context;
+use Drupal\Component\EventDispatcher\Event;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\simple_facebook_pixel\PixelBuilderService;
 use Drupal\state_machine\Event\WorkflowTransitionEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Defines the Pixel Subscriber class.
@@ -121,7 +121,7 @@ class PixelSubscriber implements EventSubscriberInterface {
   /**
    * Adds AddToCart event.
    *
-   * @param \Symfony\Contracts\EventDispatcher\Event $event
+   * @param \Drupal\Component\EventDispatcher\Event $event
    *   The add to cart event.
    */
   public function addToCartEvent(Event $event) {
@@ -135,7 +135,7 @@ class PixelSubscriber implements EventSubscriberInterface {
   /**
    * Adds AddToWishlist event. Using Commerce Wishlist module.
    *
-   * @param \Symfony\Contracts\EventDispatcher\Event $event
+   * @param \Drupal\Component\EventDispatcher\Event $event
    *   The add to wishlist event.
    */
   public function addToWishlist(Event $event) {
@@ -149,7 +149,7 @@ class PixelSubscriber implements EventSubscriberInterface {
   /**
    * Adds AddToWishlist event. Using Flag module.
    *
-   * @param \Symfony\Contracts\EventDispatcher\Event $event
+   * @param \Drupal\Component\EventDispatcher\Event $event
    *   The add to wishlist event.
    */
   public function addToWishlistFlag(Event $event) {
